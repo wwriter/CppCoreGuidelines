@@ -2,229 +2,227 @@
 layout: default
 ---
 
-# <a name="main"></a>C++ Core Guidelines
+# <a name="main"></a>C++ 핵심 가이드라인
 
-August 24, 2016
+2016년 9월 4일
 
-Editors:
+편집자:
 
 * [Bjarne Stroustrup](http://www.stroustrup.com)
 * [Herb Sutter](http://herbsutter.com/)
 
-This document is a very early draft. It is inkorrekt, incompleat, and pÂµÃoorly formatted.
-Had it been an open source (code) project, this would have been release 0.7.
-Copying, use, modification, and creation of derivative works from this project is licensed under an MIT-style license.
-Contributing to this project requires agreeing to a Contributor License. See the accompanying [LICENSE](LICENSE) file for details.
-We make this project available to "friendly users" to use, copy, modify, and derive from, hoping for constructive input.
+이 문서는 초안 상태다. 아직 완벽하지 않으며, 심지어 잘못된 내용이 있을 수 있다.
+오픈 소스 (코드) 프로젝트로, 0.7 버전까지 배포되었다.
+이 프로젝트의 복사, 사용, 수정, 파생 성과물과 관련된 저작권은 MIT 라이선스를 따른다.
+이 프로젝트에 기여하려면 기여자 라이선스(Contributor License)에 동의해야 한다.
+자세한 내용은 첨부된 [라이선스 파일(LICENSE)](LICENSE)을 참조하길 바란다.
+오픈 소스 프로젝트에 익숙한 사용자들이 사용, 복사, 수정, 파생 성과물들을 통해 좋은 정보를 제공해주기 바란다.
 
-Comments and suggestions for improvements are most welcome.
-We plan to modify and extend this document as our understanding improves and the language and the set of available libraries improve.
-When commenting, please note [the introduction](#S-introduction) that outlines our aims and general approach.
-The list of contributors is [here](#SS-ack).
+개선 사항에 대한 의견과 제안은 대부분 환영한다.
+C++ 언어에 새로운 기능들이 추가되고 사용 가능한 라이브러리들이 많아지므로 이 문서를 지속적으로 수정하고 확장해 규칙들에 대한 이해를 돕고자 한다.
+의견을 보내고 싶다면, [소개](#S-introduction)에 있는 목적과 방법을 참고하기 바란다.
+기여자 목록은 [여기](#SS-ack)를 참고하기 바란다.
 
-Problems:
+참고 사항:
 
-* The sets of rules have not been thoroughly checked for completeness, consistency, or enforceability.
-* Triple question marks (???) mark known missing information
-* Update reference sections; many pre-C++11 sources are too old.
-* For a more-or-less up-to-date to-do list see: [To-do: Unclassified proto-rules](#S-unclassified)
+* 규칙들은 아직 완성도, 일관성, 시행 가능성 등에 대해서 철저하게 검증되지 않았다.
+* (???)로 표시되어 있는 부분은 아직 관련 정보를 기입하지 않았음을 의미한다.
+* 참조 절에 있는 예제들을 갱신해야 한다. C++11 이전의 오래된 소스 코드들이 아직 많이 있다.
+* 앞으로 해야 할 일에 대한 최신 목록은 [To-do: 미분류 규칙 초안](#S-unclassified)에서 확인할 수 있다.
 
-You can [read an explanation of the scope and structure of this Guide](#S-abstract) or just jump straight in:
+[이 가이드의 범위와 구조](#S-abstract)를 확인하거나, 목차에서 읽고 싶은 부분을 클릭해 해당 내용으로 바로 이동할 수 있다.
 
-* [In: Introduction](#S-introduction)
-* [P: Philosophy](#S-philosophy)
-* [I: Interfaces](#S-interfaces)
-* [F: Functions](#S-functions)
-* [C: Classes and class hierarchies](#S-class)
-* [Enum: Enumerations](#S-enum)
-* [R: Resource management](#S-resource)
-* [ES: Expressions and statements](#S-expr)
-* [Per: Performance](#S-performance)
-* [CP: Concurrency](#S-concurrency)
-* [E: Error handling](#S-errors)
-* [Con: Constants and immutability](#S-const)
-* [T: Templates and generic programming](#S-templates)
-* [CPL: C-style programming](#S-cpl)
-* [SF: Source files](#S-source)
-* [SL: The Standard library](#S-stdlib)
+* [In(Introduction): 소개](#S-introduction)
+* [P(Philosophy): 철학](#S-philosophy)
+* [I(Interfaces): 인터페이스](#S-interfaces)
+* [F(Functions): 함수](#S-functions)
+* [C(Classes and class hierarchies): 클래스와 클래스 계층](#S-class)
+* [Enum(Enumerations): 열거형](#S-enum)
+* [R(Resource management): 리소스 관리](#S-resource)
+* [ES(Expressions and statements): 표현식과 문장](#S-expr)
+* [Per(Performance): 성능](#S-performance)
+* [CP(Concurrency): 동시성](#S-concurrency)
+* [E(Error handling): 오류 처리](#S-errors)
+* [Con(Constants and immutability): 상수와 불변성](#S-const)
+* [T(Templates and generic programming): 템플릿과 제너릭 프로그래밍](#S-templates)
+* [CPL(C-style programming): C 스타일 프로그래밍](#S-cpl)
+* [SF(Source files): 소스 파일](#S-source)
+* [SL(The Standard library): 표준 라이브러리](#S-stdlib)
 
-Supporting sections:
+참고할 만한 내용:
 
-* [A: Architectural Ideas](#S-A)
-* [N: Non-Rules and myths](#S-not)
-* [RF: References](#S-references)
-* [Pro: Profiles](#S-profile)
-* [GSL: Guideline support library](#S-gsl)
-* [NL: Naming and layout](#S-naming)
-* [FAQ: Answers to frequently asked questions](#S-faq)
-* [Appendix A: Libraries](#S-libraries)
-* [Appendix B: Modernizing code](#S-modernizing)
-* [Appendix C: Discussion](#S-discussion)
-* [Glossary](#S-glossary)
-* [To-do: Unclassified proto-rules](#S-unclassified)
+* [A(Architectural Ideas): 구조적 아이디어](#S-A)
+* [NR(Non-Rules and myths): 규칙이 아닌 미신](#S-not)
+* [RF(References): 참고 문헌](#S-references)
+* [Pro(Profiles): 프로파일](#S-profile)
+* [GSL(Guideline support library): 가이드라인 지원 라이브러리](#S-gsl)
+* [NL(Naming and layout): 이름 명명 규칙과 레이아웃](#S-naming)
+* [FAQ(Answers to frequently asked questions): 자주 묻는 질문에 대한 대답](#S-faq)
+* [부록 A: 라이브러리](#S-libraries)
+* [부록 B: 모던 C++ 스타일로 코딩하기](#S-modernizing)
+* [부록 C: 토론](#S-discussion)
+* [용어 설명](#S-glossary)
+* [To-do(Unclassified proto-rules): 미분류 규칙](#S-unclassified)
 
-or look at a specific language feature
+구체적인 C++ 기능은 다음을 참고하기 바란다.
 
-* [assignment](#S-???)
+* [대입](#S-???)
 * [`class`](#S-class)
-* [constructor](#SS-ctor)
-* [derived `class`](#SS-hier)
-* [destructor](#SS-dtor)
-* [exception](#S-errors)
+* [생성자](#SS-ctor)
+* [상속(파생)된 `class`](#SS-hier)
+* [소멸자](#SS-dtor)
+* [예외](#S-errors)
 * [`for`](#S-???)
 * [`inline`](#S-class)
-* [initialization](#S-???)
-* [lambda expression](#SS-lambdas)
-* [operator](#S-???)
-* [`public`, `private`, and `protected`](#S-???)
+* [초기화](#S-???)
+* [람다 표현식](#SS-lambdas)
+* [연산자](#S-???)
+* [`public`, `private`, `protected`](#S-???)
 * [`static_assert`](#S-???)
 * [`struct`](#S-class)
 * [`template`](#S-???)
 * [`unsigned`](#S-???)
 * [`virtual`](#SS-hier)
 
-Definitions of terms used to express and discuss the rules, that are not language-technical, but refer to design and programming techniques
+다음에 나오는 용어들의 정의는 규칙을 설명하기 위한 목적으로 사용되며, 특정 언어에 따른 기술적 용어들이 아니다.
+하지만 디자인과 프로그래밍 테크닉에사 자주 등장하는 용어들이다.
 
-* error
-* exception
-* failure
-* invariant
-* leak
-* precondition
-* postcondition
-* resource
-* exception guarantee
+* 오류(Error)
+* 예외(Exception)
+* 살패(Failure)
+* 불변(Invariant)
+* 누수(Leak)
+* 사전조건(Precondition)
+* 사후조건(Postcondition)
+* 리소스(Resource)
+* 예외 보증(Exception Guarantee)
 
-# <a name="S-abstract"></a>Abstract
+# <a name="S-abstract"></a>개요
 
-This document is a set of guidelines for using C++ well.
-The aim of this document is to help people to use modern C++ effectively.
-By "modern C++" we mean C++11 and C++14 (and soon C++17).
-In other words, what would you like your code to look like in 5 years' time, given that you can start now? In 10 years' time?
+이 문서는 C++를 올바로 사용하기 위한 가이드라인의 모음이며,
+개발자들이 모던 C++를 좀 더 효율적으로 사용할 수 있도록 돕기 위해 작성되었다.
+"모던 C++"이란 C++11, C++14 (그리고 곧 나올 C++17)을 뜻한다.
+지금 개발중인 코드가 5년, 또는 10년 후에 어떤 모습이었으면 좋겠는가?
 
-The guidelines are focused on relatively higher-level issues, such as interfaces, resource management, memory management, and concurrency.
-Such rules affect application architecture and library design.
-Following the rules will lead to code that is statically type safe, has no resource leaks, and catches many more programming logic errors than is common in code today.
-And it will run fast -- you can afford to do things right.
+C++ 핵심 가이드라인은 인터페이스, 리소스 관리, 메모리 관리, 동시성와 같이 상대적으로 고수준의 내용을 다루고 있으며,
+이러한 내용들은 대체로 애플리케이션 아키텍쳐나 라이브러리 디자인에 영향을 미친다.
+가이드라인에 나오는 규칙들을 준수하면 코드가 정적 타입 안정성을 갖도록 할 수 있으며, 리소스의 누수가 없고, 
+흔히 저지르는 수많은 프로그래밍 로직 오류를 잡아낼 수 있으며, 더욱 빠르게 수행되는 코드를 작성할 수 있을 것이다.
+즉, 올바른 코드를 만들 수 있다.
 
-We are less concerned with low-level issues, such as naming conventions and indentation style.
-However, no topic that can help a programmer is out of bounds.
+이름 지정 규칙이나 들여쓰기 스타일과 같이 세부적인 내용에 대해서는 크게 언급하지 않을 것이다.
+하지만, 프로그래머에게 도움을 줄 수 있는 주제가 있다면 다루도록 하겠다. 
 
-Our initial set of rules emphasizes safety (of various forms) and simplicity.
-They may very well be too strict.
-We expect to have to introduce more exceptions to better accommodate real-world needs.
-We also need more rules.
+초기의 규칙들은 (다양한 형태의) 안정성과 간결함을 과도하게 강조한 측면이 있다.
+실용성을 위해 여러 예외 사항들이 도입되기를 바란다. 또한 더 많은 규칙들이 필요하다.
 
-You will find some of the rules contrary to your expectations or even contrary to your experience.
-If we haven't suggested you change your coding style in any way, we have failed!
-Please try to verify or disprove rules!
-In particular, we'd really like to have some of our rules backed up with measurements or better examples.
+규칙들 중에는 기대했던 것과 다르거나 기존에 경험했던 것과 전혀 다른 부분이 있을 것이다.
+이렇든 저렇든 여러분의 코딩 스타일에 변화를 주지 못한다면, 우리는 실패한 것이다!
+올바른 규칙인지 확인해 보고, 문제가 있다면 반박해주길 바란다!
+특히, 측정 결과나 더 나은 예제들로 규칙들을 뒷받침해주길 바란다.
 
-You will find some of the rules obvious or even trivial.
-Please remember that one purpose of a guideline is to help someone who is less experienced or coming from a different background or language to get up to speed.
+명백하거나 당연해 보이는 규칙도 일부 있을 것이다.
+하지만 이 가이드라인은 숙련되지 않은 개발자들 또는 다른 배경 지식을 갖거나 다른 언어를 알고 있는 개발자들이 C++ 언어를 빨리 익힐 수 있도록 돕기 위한 문서임을 기억해 주었으면 한다.
 
-Many of the rules are designed to be supported by an analysis tool.
-Violations of rules will be flagged with references (or links) to the relevant rule.
-We do not expect you to memorize all the rules before trying to write code.
-One way of thinking about these guidelines is as a specification for tools that happens to be readable by humans.
+우리는 분석 툴을 통해 지원할 수 있도록 대부분의 규칙들을 설계했다.
+분석 툴을 이용하면 참조(또는 링크)를 통해 어떤 규칙을 위반했는지 파악할 수 있다.
+모든 규칙을 알고 코드를 작성할 수는 없는 노릇이다.
+이러한 가이드라인은 무슨 문제가 발생했는지 파악할 수 있게 해주는 툴에 대한 명세라고 볼 수 있다.
 
-The rules are meant for gradual introduction into a code base.
-We plan to build tools for that and hope others will too.
+우리는 규칙들이 코드에 점진적으로 도입되길 바라며, 이를 위한 툴을 만들 계획을 갖고 있다.
 
-Comments and suggestions for improvements are most welcome.
-We plan to modify and extend this document as our understanding improves and the language and the set of available libraries improve.
+규칙을 개선하기 위한 의견과 제안은 언제든 환영한다. 
+C++ 언어에 새로운 기능들이 추가되고 사용 가능한 라이브러리들이 많아지므로 이 문서를 지속적으로 수정하고 확장해 규칙들에 대한 이해를 돕고자 한다.
 
-# <a name="S-introduction"></a>In: Introduction
+# <a name="S-introduction"></a>In(Introduction): 소개
 
-This is a set of core guidelines for modern C++, C++14, and taking likely future enhancements and taking ISO Technical Specifications (TSs) into account.
-The aim is to help C++ programmers to write simpler, more efficient, more maintainable code.
+이 문서는 모던 C++, C++14는 물론이고 추후 개션될 내용과 ISO 기술 명세(Technical Specification; TS)까지 고려한 핵심 가이드라인이다.
+이 문서의 목표는 C++ 프로그래머가 더욱 간단하고, 효과적이며, 유지 보수하기 좋은 코드를 작성하는데 도움을 주는 것이다.
 
-Introduction summary:
+소개 요약:
 
-* [In.target: Target readership](#SS-readers)
-* [In.aims: Aims](#SS-aims)
-* [In.not: Non-aims](#SS-non)
-* [In.force: Enforcement](#SS-force)
-* [In.struct: The structure of this document](#SS-struct)
-* [In.sec: Major sections](#SS-sec)
+* [In.target(Target readership): 대상 독자](#SS-readers)
+* [In.aims(Aims): 목표인 부분](#SS-aims)
+* [In.not(Non-aims): 목표가 아닌 부분](#SS-non)
+* [In.force(Enforcement): 적용](#SS-force)
+* [In.struct(The structure of this document): 이 문서의 구조](#SS-struct)
+* [In.sec(Major sections): 주요 목차](#SS-sec)
 
-## <a name="SS-readers"></a>In.target: Target readership
+## <a name="SS-readers"></a>In.target(Target readership): 대상 독자
 
-All C++ programmers. This includes [programmers who might consider C](#S-cpl).
+모든 C++ 프로그래머. 또한 [C를 고려하는 프로그래머](#S-cpl).
 
-## <a name="SS-aims"></a>In.aims: Aims
+## <a name="SS-aims"></a>In.aims(Aims): 목표인 부분
 
-The purpose of this document is to help developers to adopt modern C++ (C++11, C++14, and soon C++17) and to achieve a more uniform style across code bases.
+이 문서는 개발자들이 모던 C++(C++11, C++14, 이후 C++17까지)을 익히는데 도움을 주고, 좀 더 일관된 스타일로 코드를 작성할 수 있게 해주려는 목적으로 작성되었다.
 
-We do not suffer the delusion that every one of these rules can be effectively applied to every code base. Upgrading old systems is hard. However, we do believe that a program that uses a rule is less error-prone and more maintainable than one that does not. Often, rules also lead to faster/easier initial development.
-As far as we can tell, these rules lead to code that performs as well or better than older, more conventional techniques; they are meant to follow the zero-overhead principle ("what you don't use, you don't pay for" or "when you use an abstraction mechanism appropriately, you get at least as good performance as if you had handcoded using lower-level language constructs").
-Consider these rules ideals for new code, opportunities to exploit when working on older code, and try to approximate these ideas as closely as feasible.
-Remember:
+이 문서에서 다루고 있는 규칙들이 모든 코드에 효과적으로 적용할 수 있다고 생각하지는 않는다.
+오래된 시스템을 새롭게 업그레이드하는 것은 쉽지 않은 일이다. 하지만 여기서 다루는 규칙들을 적용한다면 기존의 방식보다 오류가 발생할 가능성이 낮고, 유지 보수가 편리한 코드를 작성할 수 있을 것이라 확신한다.
+또한 이러한 규칙들은 개발 초기에 좀 더 빠르고 쉽게 개발을 진행하는 데도 도움이 될 것이다.
+분명히 말할 수 있는 것은, 이러한 규칙들을 적용하면 제로-비용 원칙(Zero-overhead principle)에 입각해 이전보다 더 나은 동작을 수행되는 코드를 만들 수 있다는 점이다. 
+(제로-비용 원칙이란 "사용하지 않는 부분에 비용을 낭비하지 마라.", 또는 "올바른 추상화 메커니즘을 사용했을 경우, 적어도 저수준 언어로 하드코딩한 것 만큼의 성능을 얻을 수 있다." 정도로 설명할 수 있다.)
+새로운 코드를 작성하거나 기존 코드를 개선할 여지가 생겼다면, 적용 가능한 수준에서 규칙들을 적용해 보기 바란다.
 
-### <a name="R0"></a>In.0: Don't panic!
+### <a name="R0"></a>In.0(Don't panic!): 당황하지 마라! 
 
-Take the time to understand the implications of a guideline rule on your program.
+여러분의 프로그램에 가이드라인에 나온 규칙을 적용한다면, 어떤 영향을 줄 지 충분히 고려해야 한다. 
 
-These guidelines are designed according to the "subset of superset" principle ([Stroustrup05](#Stroustrup05)).
-They do not simply define a subset of C++ to be used (for reliability, safety, performance, or whatever).
-Instead, they strongly recommend the use of a few simple "extensions" ([library components](#S-gsl))
-that make the use of the most error-prone features of C++ redundant, so that they can be banned (in our set of rules).
+가이드라인은 "상위 집합의 하위 집합(Subset of superset)" ([Stroustrup05](#Stroustrup05)) 원리에 따라 구성되어 있다.
+우리는 신뢰성, 안정성, 성능 등을 고려해 단순히 C++의 한 부분 집합을 정의하지 않는다.
+대신, 몇 가지 간단한 "확장" ([라이브러리 구성 요소](#S-gsl))을 사용하길 강력히 권고한다.
+이를 통해 오류가 발생하기 쉬운 C++ 기능들의 대부분을 제거할 수 있다.
 
-The rules emphasize static type safety and resource safety.
-For that reason, they emphasize possibilities for range checking, for avoiding dereferencing `nullptr`, for avoiding dangling pointers, and the systematic use of exceptions (via RAII).
-Partly to achieve that and partly to minimize obscure code as a source of errors, the rules also emphasize simplicity and the hiding of necessary complexity behind well-specified interfaces.
+가이드라인에 포함된 규칙들은 정적 타입 안정성과 리소스 안정성에 특히 주안점을 두고 있다.
+이러한 이유로 범위 확인 가능성, `nullptr`를 통한 역참조 회피 가능성, 댕글링 포인터(Dangling pointer) 회피 가능성, (RAII를 통한) 시스템적인 예외 사용 등을 강조한다.
+잘 알려져 있지 않은 소스 코드의 오류 발생 가능성을 부분적으로나마 극복하고 최소화 하는 방법, 좀 더 단순한 표현 방식뿐 아니라 올바르게 정의된 인터페이스를 통해 복잡도를 드러내지 않는 방법 등을 강조한다.
 
-Many of the rules are prescriptive.
-We are uncomfortable with rules that simply state "don't do that!" without offering an alternative.
-One consequence of that is that some rules can be supported only by heuristics, rather than precise and mechanically verifiable checks.
-Other rules articulate general principles. For these more general rules, more detailed and specific rules provide partial checking.
+많은 규칙들은 규범적인 성격을 띄고 있다.
+대안도 없이 그저 "그렇게 하지 마라!"라고만 하는 규칙들은 불편할 수 밖에 없다.
+일부 규칙들은 기계적으로 정밀 검증할 수 있다기 보다는 경험에 근거하여 작성되었다. 
+다른 부류의 규칙들은 일반적인 원칙을 논리적으로 정리한 것이며, 널리 사용될 것이라 생각되는 규칙들은 더욱 자세하게, 그리고 부분적으로나마 검증이 가능하도록 구체적으로 설명했다.
 
-These guidelines address the core of C++ and its use.
-We expect that most large organizations, specific application areas, and even large projects will need further rules, possibly further restrictions, and further library support.
-For example, hard real-time programmers typically can't use free store (dynamic memory) freely and will be restricted in their choice of libraries.
-We encourage the development of such more specific rules as addenda to these core guidelines.
-Build your ideal small foundation library and use that, rather than lowering your level of programming to glorified assembly code.
+또한 이 가이드라인은 C++에서 핵심이 되는 내용과 그 사용법을 다루고 있기도 하다. 
+조직의 규모가 매우 크거나, 특화된 분야의 애플리케이션을 개발하거나, 프로젝트의 규모가 매우 크다면 여기서 다루는 내용보다 더 다양한 규칙과 제약, 라이브러리가 필요할 것이다.
+예를 들어 고도의 실시간 애플리케이션을 개발하는 경우라면 자유 저장소(Free Store, 동적 메모리)를 아무렇게나 사용하면 안되기 때문에, 라이브러리를 선택하는데 제약이 있을 수 밖에 없다.
+이처럼 특화된 개발 분야에만 적용 할 수 있는 규칙들은 핵심 가이드라인의 부록에 담았다.
+어셈블리 코드와 같이 저수준의 프로그래밍 방식을 고수하기 보다는 핵심 기능을 구현하고 있는 소규모의 라이브러리를 만들고 사용하기 바란다.
 
-The rules are designed to allow [gradual adoption](#S-modernizing).
+규칙들은 [점진적으로 적용](#S-modernizing)해 볼 수 있다.
 
-Some rules aim to increase various forms of safety while others aim to reduce the likelihood of accidents, many do both.
-The guidelines aimed at preventing accidents often ban perfectly legal C++.
-However, when there are two ways of expressing an idea and one has shown itself a common source of errors and the other has not, we try to guide programmers towards the latter.
+일부 규칙들은 안정성을 높이기 위해 다양한 방법들을 설명하고 있으며, 또 다른 규칙들은 문제 발생 가능성을 낮추는 방법을 설명하고 있다. 혹은 이 둘을 모두 고려해 만들어진 규칙들도 있다.
+규칙을 통해 전달하고자 하는 내용을 기술할 때 통상 오류 발생 가능성이 높은 경우와 그렇지 않은 경우가 있다면, 가능한 오류 발생 가능성이 낮은 방법을 택했다.
 
-## <a name="SS-non"></a>In.not: Non-aims
+## <a name="SS-non"></a>In.not(Non-aims): 목표가 아닌 부분
 
-The rules are not intended to be minimal or orthogonal.
-In particular, general rules can be simple, but unenforceable.
-Also, it is often hard to understand the implications of a general rule.
-More specialized rules are often easier to understand and to enforce, but without general rules, they would just be a long list of special cases.
-We provide rules aimed at helping novices as well as rules supporting expert use.
-Some rules can be completely enforced, but others are based on heuristics.
+최소한의 규칙만을 정의하고, 그 규칙들이 정밀하게 들어 맞도록 가이드라인을 조직적으로 작성한 것은 아니다.
+실제로 범용적인 규칙들 중에는 간단해 보이지만 실제로 적용하기가 매우 어려운 것들도 있으며, 그러한 규칙들이 지닌 함축적인 의미를 이해하기 어려울 수도 있다.
+구체적인 규칙들이 좀 더 이해 및 적용하기 쉽지만, 범용적인 규칙들을 다루지 않고는 특별한 경우만을 장황하게 나열할 수 밖에 없었을 것이다.
+각각의 규칙들은 초보 개발자 뿐만 아니라 전문가들에게도 도움이 될 수 있도록 작성했다.
+일부 규칙은 반드시 적용되어야 하지만, 필요에 따라 적용 여부를 선택적으로 결정해야 하는 경우도 있다.
 
-These rules are not meant to be read serially, like a book.
-You can browse through them using the links.
-However, their main intended use is to be targets for tools.
-That is, a tool looks for violations and the tool returns links to violated rules.
-The rules then provide reasons, examples of potential consequences of the violation, and suggested remedies.
+여기서 다루는 규칙들을 책에서 다루는 것인냥 너무 심각하게 받아들을 필요는 없다. 링크를 통해서 규칙들을 가볍게 살펴보는 것도 괜찮다.
+사실 이처럼 규칙을 엄밀하게 정의한 이유는 규칙들을 위배한 코드를 찾고, 그에 대한 링크 정보를 보여주는 툴을 만들기 위해서이다.
+즉, 규칙이 만들어진 이유를 설명하고, 만약 규칙을 따르지 않았을 때 어떤 문제가 발생할 수 있고, 그 문제를 어떻게 해결할 수 있는지를 알려주기 위해서다.
 
-These guidelines are not intended to be a substitute for a tutorial treatment of C++.
-If you need a tutorial for some given level of experience, see [the references](#S-references).
+이 가이드라인은 C++ 튜토리얼을 대체할 용도로 작성된 것이 아니다.
+개발자의 수준에 부합하는 튜토리얼이 필요하다면, [참고 문헌](#S-references)을 참조하기 바란다.
 
-This is not a guide on how to convert old C++ code to more modern code.
-It is meant to articulate ideas for new code in a concrete fashion.
-However, see [the modernization section](#S-modernizing) for some possible approaches to modernizing/rejuvenating/upgrading.
-Importantly, the rules support gradual adoption: It is typically infeasible to convert all of a large code base at once.
+이 문서는 기존의 C++ 코드를 모던 C++ 코드로 변환하는 방법에 대해서 다루고 있는 것도 아니다.
+다만, 새로운 C++ 코드에 대한 논리 정연한 생각들을 구체적으로 설명한다.
+따라서 기존 코드를 모던하게, 젊고 활기차게, 업그레이드 하고 싶다면 [모던화](#S-modernizing)를 참조하기 바란다.
+중요한 것은 이 문서에서 다루고 있는 규칙들을 점진적으로 적용할 수 있다는 점이다. 엄청난 양의 코드를 단번에 바꿀 수는 없는 노릇이다.
 
-These guidelines are not meant to be complete or exact in every language-technical detail.
-For the final word on language definition issues, including every exception to general rules and every feature, see the ISO C++ standard.
+이 가이드라인이 언어의 기술 세부 사항을 완벽하게, 또는 정확하게 설명하지는 않는다. 
+언어의 명세, 일반 규칙에 대한 예외 사항, 그 외 세부 기능들에 대해서는 ISO C++ 표준을 참조하기 바란다.
 
-The rules are not intended to force you to write in an impoverished subset of C++.
-They are *emphatically* not meant to define a, say, Java-like subset of C++.
-They are not meant to define a single "one true C++" language.
-We value expressiveness and uncompromised performance.
+규칙들을 작성할 때 C++의 일부 기능만을 이용해 코드를 작성하도록 의도하지는 않았다.
+마치 C++의 일부만을 떼어놓은 Java를 사용하는 것처럼 강제하기 위함은 *절대로* 아니라는 것이다.
+"단 하나의 올바른 C++" 언어라는 식의 정의 또한 의도하는 바가 아니다.
+다만 가이드라인에 포함된 규칙을 통해서 C++라는 언어가 성능과 타협하지 않으면서도 풍부한 표현력을 지닌 언어라는 점을 강조하고자 했다.
 
-The rules are not value-neutral.
-They are meant to make code simpler and more correct/safer than most existing C++ code, without loss of performance.
-They are meant to inhibit perfectly valid C++ code that correlates with errors, spurious complexity, and poor performance.
+세부 규칙들을 통해서 전달하려는 가치는 명확하다.
+기존의 C++ 코드보다 더욱 간단하고, 올바르고, 안전한 코드를 성능을 손해보지 않고 작성할 수 있도록 돕는 것이다.
+또한 유효한 C++ 코드이긴 하지만 오류를 유발할 가능성이 높고, 불필요하게 복잡하고, 성능도 좋지 않은 코드를 피할 수 있도록 돕는 것이다.
 
 The rules are not perfect.
 A rule can do harm by prohibiting something that is useful in a given situation.
@@ -235,40 +233,41 @@ Instead, our aim is the less ambitious: "Do the most good for most programmers";
 if you cannot live with a rule, object to it, ignore it, but don't water it down until it becomes meaningless.
 Also, suggest an improvement.
 
-## <a name="SS-force"></a>In.force: Enforcement
+## <a name="SS-force"></a>In.force(Enforcement): 적용
 
-Rules with no enforcement are unmanageable for large code bases.
-Enforcement of all rules is possible only for a small weak set of rules or for a specific user community.
+사실상 다양한 규칙들을 적용하도록 강제하지 않고서는 이러한 규칙들이 방대한 코드에 모두 적용되리라고 기대하기는 어렵다.
+실상, 모든 규칙을 강제적으로 적용하는 것은 규칙의 수가 몇 개 되지 않거나 특수한 사용자 집단에서나 가능한 일일지도 모르겠다.
 
-* But we want lots of rules, and we want rules that everybody can use.
-* But different people have different needs.
-* But people don't like to read lots of rules.
-* But people can't remember many rules.
+* 그러나 사람들은 모든 사람들이 사용할 수 있는 다양한 규칙들을 원한다.
+* 그러나 사람들은 서로 다른 규칙들을 갖는다.
+* 그러나 사람들은 방대한 규칙을 모두 읽고 싶어하지 않는다.
+* 그러나 사람들은 수많은 규칙들을 기억할 수 없다.
 
-So, we need subsetting to meet a variety of needs.
+이러한 이유로 다양한 요구 사항들의 공통적인 부분만을 뽑아내려고 해봤다.
 
-* But arbitrary subsetting leads to chaos.
+* 그러나 임의의 규칙을 정하는 것 조차 혼돈을 초래할 것으로 생각한다.
 
-We want guidelines that help a lot of people, make code more uniform, and strongly encourage people to modernize their code.
-We want to encourage best practices, rather than leave all to individual choices and management pressures.
-The ideal is to use all rules; that gives the greatest benefits.
+우리는 더 많은 개발자들에게 도움이 되고, 코드를 좀 더 간결하게 만들 수 있으며, 기존 코드를 모던화 할 수 있는 가이드라인을 만들고 싶었다.
+개인의 선택의 문제라거나 관리의 압박으로 인해 신경쓰지 않았던 부분들도 도외시하지 않고 최선의 실용적인 예를 다루고자 했다.
+바라건대 모든 규칙들을 적용하는 것이 좋다고 생각한다. 그렇게 해야만 최고의 이득을 본다고 생각하기 때문이다.
 
-This adds up to quite a few dilemmas.
-We try to resolve those using tools.
-Each rule has an **Enforcement** section listing ideas for enforcement.
-Enforcement might be by code review, by static analysis, by compiler, or by run-time checks.
-Wherever possible, we prefer "mechanical" checking (humans are slow, inaccurate, and bore easily) and static checking.
-Run-time checks are suggested only rarely where no alternative exists; we do not want to introduce "distributed fat".
-Where appropriate, we label a rule (in the **Enforcement** sections) with the name of groups of related rules (called "profiles").
-A rule can be part of several profiles, or none.
-For a start, we have a few profiles corresponding to common needs (desires, ideals):
+이는 꽤나 심각한 딜레마가 아닐 수 없는데, 우리는 이러한 딜레마의 해결책이 툴을 개발하는 것이라고 생각했다.
+각각의 규칙들은 적용 방법을 설명하고 있는 **적용** 단락을 갖고 있는데, 
+코드 리뷰, 정적 분석, 컴파일러, 런타임 체크 등의 방법을 나열하고 있다.
+어떤 방식이든 우리는 "기계적"이며(사람은 느리기도 하고, 쉽게 지루해 할 수 있으므로) 일관된 방법으로 개별 규칙들이 적용되기를 원했다.
+이런 이유로 런타임 체크는 다른 대안이 없을 경우에 한해서만 언급했다.
+이 같은 내용들을 여기저기에 흩어놓기 보다는 사용자가 원할 경우 쉽게 찾을 수 있도록 하고 싶었기에,
+(**적용** 단락 내에) 적절한 위치라고 생각되는 곳에 연관된 규칙들을 "프로필"이라는 이름으로 나열해 두었다.
+하나의 규칙은 여러 프로필에 속할 수 있으며, 어떤 프로필에도 속하지 않은 규칙들도 있다.
+자주 사용되는 프로필 몇 가지를 먼저 살펴보자.
 
-* **type**: No type violations (reinterpreting a `T` as a `U` through casts, unions, or varargs)
-* **bounds**: No bounds violations (accessing beyond the range of an array)
-* **lifetime**: No leaks (failing to `delete` or multiple `delete`) and no access to invalid objects (dereferencing `nullptr`, using a dangling reference).
+* **타입**: (캐스팅, 공용체, 가변 인수를 통해 `T`를 `U`로 재해석 하는) 타입 위반 없음
+* **한계**: (배열의 범위를 넘어서 접근하는) 범위 위반 없음
+* **수명**: (`delete`나 `delete[]`이 실패하는) 누수 없음, (`nullptr`를 역참조하고 댕글링된 참조를 사용해) 유효하지 않은 개체에 접근하지 않음
 
-The profiles are intended to be used by tools, but also serve as an aid to the human reader.
-We do not limit our comment in the **Enforcement** sections to things we know how to enforce; some comments are mere wishes that might inspire some tool builder.
+프로필은 툴에서 활용할 용도로 만들었지만, 내용을 읽어보면 많은 도움이 된다.
+**적용** 단락을 단순히 우리가 알고 있는 적용 방법을 제시하는 것으로만 제한하고 싶지 않다.
+단락 중 일부는 툴 개발자에게 도움이 될만한 내용일 것이다.
 
 Tools that implement these rules shall respect the following syntax to explicitly suppress a rule:
 
@@ -278,105 +277,104 @@ where "tag" is the anchor name of the item where the Enforcement rule appears (e
 name of a profile group-of-rules ("type", "bounds", or "lifetime"),
 or a specific rule in a profile ([type.4](#Pro-type-cstylecast), or [bounds.2](#Pro-bounds-arrayindex)).
 
-## <a name="SS-struct"></a>In.struct: The structure of this document
+## <a name="SS-struct"></a>In.struct(The structure of this document): 이 문서의 구조
 
-Each rule (guideline, suggestion) can have several parts:
+각 규칙(가이드라인, 제안)은 여러 부분으로 나뉜다.
 
-* The rule itself -- e.g., **no naked `new`**
-* A rule reference number -- e.g., **C.7** (the 7th rule related to classes).
-  Since the major sections are not inherently ordered, we use a letter as the first part of a rule reference "number".
-  We leave gaps in the numbering to minimize "disruption" when we add or remove rules.
-* **Reason**s (rationales) -- because programmers find it hard to follow rules they don't understand
-* **Example**s -- because rules are hard to understand in the abstract; can be positive or negative
-* **Alternative**s -- for "don't do this" rules
-* **Exception**s -- we prefer simple general rules. However, many rules apply widely, but not universally, so exceptions must be listed
-* **Enforcement** -- ideas about how the rule might be checked "mechanically"
-* **See also**s -- references to related rules and/or further discussion (in this document or elsewhere)
-* **Note**s (comments) -- something that needs saying that doesn't fit the other classifications
-* **Discussion** -- references to more extensive rationale and/or examples placed outside the main lists of rules
+* 규칙 그 자체 -- 예) **`new`를 무방비 상태로 사용하지 마라**
+* 규칙 참조 번호 -- 예), **C.7** (클래스와 관련된 7번째 규칙).
+  주요 단원이 순서대로 나열되지 않았기 때문에 규칙 참조 "번호"의 첫 번째 부분은 문자로 시작한다.
+  규칙을 추가하거나 삭제할 때 혼란을 최소화하기 위해 숫자를 매길때 간격을 둔다.
+* **이유**들 (근거) -- 이해할 수 없는 규칙을 따르고 싶지는 않을 것이므로 구체적인 이유를 설명한다.
+* **예제**들 -- 추상적인 표현만으로 내용을 이해하기 어려울 경우 구체적인 예(좋은 예나 나쁜 예)를 기술한다.
+* **대안**들 -- "이런 식으로 하지 마라"에 대한 대안을 제시한다.
+* **예외**들 -- 단순하고 보편적인 규칙이 좋다. 많은 규칙들이 널리 사용되지만 만능은 아니므로 예외가 있을 경우 이를 나열한다.
+* **적용** -- "기계적으로" 규칙을 확인하는 방법에 대한 아이디어를 설명한다.
+* **참고 항목**들 -- (이 문서나 다른 문서에 대해) 규칙이나 관련 내용과 연관된 항목들을 안내한다.
+* **비고**들 (언급) -- 다른데서 다루기 적합하지 않은 부분에 대해 추가로 설명한다.
+* **논의** -- 규칙을 제시한 근본적인 이유를 담고 있는 다른 글에 대한 참조나 규칙의 주요 리스트에 포함되지 않는 예 등을 설명한다.
 
-Some rules are hard to check mechanically, but they all meet the minimal criteria that an expert programmer can spot many violations without too much trouble.
-We hope that "mechanical" tools will improve with time to approximate what such an expert programmer notices.
+일부 규칙들은 기계적으로 확인하기에 어려울 수 있으나 전문적인 프로그래머라면 손쉽게 위반 여부를 발견할 수 있다.
+We hope that "mechanical" tools will improve with time to approximate what <such></such> an expert programmer notices.
 Also, we assume that the rules will be refined over time to make them more precise and checkable.
 
-A rule is aimed at being simple, rather than carefully phrased to mention every alternative and special case.
-Such information is found in the **Alternative** paragraphs and the [Discussion](#S-discussion) sections.
-If you don't understand a rule or disagree with it, please visit its **Discussion**.
-If you feel that a discussion is missing or incomplete, enter an [Issue](https://github.com/isocpp/CppCoreGuidelines/issues)
-explaining your concerns and possibly a corresponding PR.
+각 규칙에 적용 가능한 모든 대안과 특별한 예외사항까지 모두 언급하기를 바라지는 않는다. 가능한 단순하게 유지되길 바란다.
+이러한 정보는 **대안** 단락과 [토론](#S-discussion) 절에서 찾을 수 있다.
+규칙을 이해할 수 없거나 동의하지 않는다면, **논의**를 살펴보기 바란다.
+또한, 논의가 없거나 불완전하다고 생각된다면 [이슈](https://github.com/isocpp/CppCoreGuidelines/issues)에 여러분이 염려하는 부분과 가능하다면 연관된 PR에 대한 설명을 적어주기 바란다.
 
-This is not a language manual.
-It is meant to be helpful, rather than complete, fully accurate on technical details, or a guide to existing code.
-Recommended information sources can be found in [the references](#S-references).
+이 문서는 언어어 대한 매뉴얼이 아니다.
+따라서 기술적인 세부 사항을 자세히 다루기보다는 기존에 작성된 코드에 대한 가이드로써의 역할을 했으면 한다.
+도움이 되는 정보의 출처는 [참고 문헌](#S-references)에서 찾을 수 있다.
 
-## <a name="SS-sec"></a>In.sec: Major sections
+## <a name="SS-sec"></a>In.sec(Major sections): 주요 목차
 
-* [In: Introduction](#S-introduction)
-* [P: Philosophy](#S-philosophy)
-* [I: Interfaces](#S-interfaces)
-* [F: Functions](#S-functions)
-* [C: Classes and class hierarchies](#S-class)
-* [Enum: Enumerations](#S-enum)
-* [R: Resource management](#S-resource)
-* [ES: Expressions and statements](#S-expr)
-* [E: Error handling](#S-errors)
-* [Con: Constants and immutability](#S-const)
-* [T: Templates and generic programming](#S-templates)
-* [CP: Concurrency](#S-concurrency)
-* [SL: The Standard library](#S-stdlib)
-* [SF: Source files](#S-source)
-* [CPL: C-style programming](#S-cpl)
-* [Pro: Profiles](#S-profile)
-* [GSL: Guideline support library](#S-gsl)
-* [FAQ: Answers to frequently asked questions](#S-faq)
+* [In(Introduction): 소개](#S-introduction)
+* [P(Philosophy): 철학](#S-philosophy)
+* [I(Interfaces): 인터페이스](#S-interfaces)
+* [F(Functions): 함수](#S-functions)
+* [C(Classes and class hierarchies): 클래스와 클래스 계층](#S-class)
+* [Enum(Enumerations): 열거형](#S-enum)
+* [R(Resource management): 리소스 관리](#S-resource)
+* [ES(Expressions and statements): 표현식과 문장](#S-expr)
+* [E(Error handling): 오류 처리](#S-errors)
+* [Con(Constants and immutability): 상수와 불변성](#S-const)
+* [T(Templates and generic programming): 템플릿과 제너릭 프로그래밍](#S-templates)
+* [CP(Concurrency): 동시성](#S-concurrency)
+* [SL(The Standard library): 표준 라이브러리](#S-stdlib)
+* [SF(Source files): 소스 파일](#S-source)
+* [CPL(C-style programming): C 스타일 프로그래밍](#S-cpl)
+* [Pro(Profiles): 프로파일](#S-profile)
+* [GSL(Guideline support library): 가이드라인 지원 라이브러리](#S-gsl)
+* [FAQ(Answers to frequently asked questions): 자주 묻는 질문에 대한 대답](#S-faq)
 
-Supporting sections:
+참고할 만한 내용:
 
-* [NL: Naming and layout](#S-naming)
-* [Per: Performance](#S-performance)
-* [N: Non-Rules and myths](#S-not)
-* [RF: References](#S-references)
-* [Appendix A: Libraries](#S-libraries)
-* [Appendix B: Modernizing code](#S-modernizing)
-* [Appendix C: Discussion](#S-discussion)
-* [Glossary](#S-glossary)
-* [To-do: Unclassified proto-rules](#S-unclassified)
+* [NL(Naming and layout): 이름 명명 규칙과 레이아웃](#S-naming)
+* [Per(Performance): 성능](#S-performance)
+* [NR(Non-Rules and myths): 규칙이 아닌 미신](#S-not)
+* [RF(References): 참고 문헌](#S-references)
+* [부록 A: 라이브러리](#S-libraries)
+* [부록 B: 모던 C++ 스타일로 코딩하기](#S-modernizing)
+* [부록 C: 토론](#S-discussion)
+* [용어 설명](#S-glossary)
+* [To-do(Unclassified proto-rules): 미분류 규칙](#S-unclassified)
 
-These sections are not orthogonal.
+각 목차에 있는 내용은 서로 연관되어 있다.
 
-Each section (e.g., "P" for "Philosophy") and each subsection (e.g., "C.hier" for "Class Hierarchies (OOP)") have an abbreviation for ease of searching and reference.
-The main section abbreviations are also used in rule numbers (e.g., "C.11" for "Make concrete types regular").
+각 목차("P"는 "철학(Philosophy)")와 부 목차("C.hier"는 "클래스 계층(Class Hierarchies) (OOP)")은 검색, 참조의 편의를 위해 약어로 표기한다.
+주요 목차에 대한 약어로 규칙 번호를 사용하기도 한다. (즉, "각 타입을 일반적인 타입으로 만들어라."라는 규칙을 "C.11"로 나타내기도 한다.)
 
-# <a name="S-philosophy"></a>P: Philosophy
+# <a name="S-philosophy"></a>P(Philosophy): 철학
 
-The rules in this section are very general.
+이 장의 규칙은 매우 일반적이다.
 
-Philosophy rules summary:
+철학 규칙 요약:
 
-* [P.1: Express ideas directly in code](#Rp-direct)
-* [P.2: Write in ISO Standard C++](#Rp-Cplusplus)
-* [P.3: Express intent](#Rp-what)
-* [P.4: Ideally, a program should be statically type safe](#Rp-typesafe)
-* [P.5: Prefer compile-time checking to run-time checking](#Rp-compile-time)
-* [P.6: What cannot be checked at compile time should be checkable at run time](#Rp-run-time)
-* [P.7: Catch run-time errors early](#Rp-early)
-* [P.8: Don't leak any resources](#Rp-leak)
-* [P.9: Don't waste time or space](#Rp-waste)
+* [P.1: 아이디어를 직접 코드로 표현하라](#Rp-direct)
+* [P.2: ISO 표준 C++로 작성하라](#Rp-Cplusplus)
+* [P.3: 의도를 표현하라](#Rp-what)
+* [P.4: 이상적으로 프로그램은 정적으로 타입 안전해야 한다](#Rp-typesafe)
+* [P.5: 런타임 검사보다는 컴파일 타임 검사를 선호하라](#Rp-compile-time)
+* [P.6: 컴파일 타임에 검사할 수 없다면 런타임에 검사할 수 있어야 한다](#Rp-run-time)
+* [P.7: 런타임 오류는 초기에 잡아라](#Rp-early)
+* [P.8: 리소스가 새도록 하지 마라](#Rp-leak)
+* [P.9: 시간이나 공간을 낭비하지 마라](#Rp-waste)
 * [P.10: Prefer immutable data to mutable data](#Rp-mutable)
 * [P.11: Encapsulate messy constructs, rather than spreading through the code](#Rp-library)
 
-Philosophical rules are generally not mechanically checkable.
-However, individual rules reflecting these philosophical themes are.
-Without a philosophical basis the more concrete/specific/checkable rules lack rationale.
+철학적 규칙은 보통 기계적으로 검사할 수 없다.
+그러나 철학적인 테마를 반영하는 개별적인 규칙은 검사할 수 하다.
+철학적인 기초가 없이 구체적이고/특수하고/검사 가능한 규칙은 근거가 부족하다.
 
-### <a name="Rp-direct"></a>P.1: Express ideas directly in code
+### <a name="Rp-direct"></a>P.1: 아이디어를 직접 코드로 표현하라
 
-##### Reason
+##### 이유
 
-Compilers don't read comments (or design documents) and neither do many programmers (consistently).
-What is expressed in code has defined semantics and can (in principle) be checked by compilers and other tools.
+컴파일러는 주석문(또는 디자인 문서)을 읽지 않는다. 수많은 프로그래머 또한 주석을 (일관되게) 읽지 않는다.
+코드로 표현된 내용이라면 그 의미(의도)를 이미 정의했을 것이며 (대체로) 컴파일러나 다른 툴로 검사할 수 있다.
 
-##### Example
+##### 예제
 
     class Date {
         // ...
@@ -386,10 +384,10 @@ What is expressed in code has defined semantics and can (in principle) be checke
         // ...
     };
 
-The first declaration of `month` is explicit about returning a `Month` and about not modifying the state of the `Date` object.
-The second version leaves the reader guessing and opens more possibilities for uncaught bugs.
+첫번째 `month` 함수는 명확히 `Month`를 반환하도록 선언되어 있으며, `Date` 개체의 상태를 변경하지 않을 것처럼 보인다. 
+두번째 버전은 코드를 읽는 개발자들을 고민하게 만들며, 발견하기 어려운 버그를 유발할 가능성이 있다.
 
-##### Example
+##### 예제
 
     void f(vector<string>& v)
     {
@@ -405,8 +403,8 @@ The second version leaves the reader guessing and opens more possibilities for u
         // ...
     }
 
-That loop is a restricted form of `std::find`.
-A much clearer expression of intent would be:
+위 반복문은 `std::find`를 이용해 표현 가능하다. 
+의도를 더 명확하게 드러내기 위해 아래와 같이 코드를 바꿀 수 있다.
 
     void f(vector<string>& v)
     {
@@ -417,46 +415,47 @@ A much clearer expression of intent would be:
         // ...
     }
 
-A well-designed library expresses intent (what is to be done, rather than just how something is being done) far better than direct use of language features.
+언어가 제공하는 기능을 직접 사용하기보다 잘 설계된 라이브러리를 사용해 그 의도(어떻게 수행되는지보다 무엇이 수행되는지를) 표현하는 것이 훨씬 낫다.
 
-A C++ programmer should know the basics of the standard library, and use it where appropriate.
-Any programmer should know the basics of the foundation libraries of the project being worked on, and use them appropriately.
-Any programmer using these guidelines should know the [guideline support library](#S-gsl), and use it appropriately.
+C++ 프로그래머는 표준 라이브러리의 기본 내용을 반드시 이해하고 올바른 곳에 사용해야 한다.
+어떤 프로그래머든 프로젝트에 기반하고 있는 핵심 라이브러리의 기본 내용을 반드시 이해하고 있어야 하며, 올바르게 사용할 줄 알아야 한다.
+이 가이드라인을 사용하는 프로그래머는 [가이드라인 지원 라이브러리](#S-gsl)을 반드시 알아야 하고 적절히 사용할 줄 알아야 한다.
 
-##### Example
+##### 예제
 
     change_speed(double s);   // bad: what does s signify?
     // ...
     change_speed(2.3);
 
-A better approach is to be explicit about the meaning of the double (new speed or delta on old speed?) and the unit used:
+더 좋은 접근법은 `double`(새 속도, 또는 이전 속도와의 차이)의 의미와 단위를 명확히 하는 것이다.
 
     change_speed(Speed s);    // better: the meaning of s is specified
     // ...
     change_speed(2.3);        // error: no unit
     change_speed(23m / 10s);  // meters per second
 
-We could have accepted a plain (unit-less) `double` as a delta, but that would have been error-prone.
-If we wanted both absolute speed and deltas, we would have defined a `Delta` type.
+(단위가 없는) 단순한 `double`을 변화량(속도의 차)으로 받아들일 수도 있겠지만, 아무래도 오류가 발생하기 쉽다.
+속도와 변화량 둘 다 필요하다면, `Delta` 타입을 정의해야 할 것이다.
 
-##### Enforcement
+##### 적용
 
-Very hard in general.
+일반적으로 매우 어렵다.
 
-* use `const` consistently (check if member functions modify their object; check if functions modify arguments passed by pointer or reference)
-* flag uses of casts (casts neuter the type system)
-* detect code that mimics the standard library (hard)
+* 일관성 있게 `const`를 사용하라. (멤버 함수가 개체를 변경하는지 확인하라. 그리고 포인터나 레퍼런스로 넘어온 인자를 변경하는지 확인하라.)
+* 타입 변환의 사용을 표시하라. (타입 변환은 타입 시스템을 무력화시킨다.)
+* 표준 라이브러리를 흉내내는 코드를 찾아라. (하지만 찾기 어렵다.)
 
-### <a name="Rp-Cplusplus"></a>P.2: Write in ISO Standard C++
+### <a name="Rp-Cplusplus"></a>P.2: ISO 표준 C++로 작성하라
 
-##### Reason
+##### 이유
 
-This is a set of guidelines for writing ISO Standard C++.
+이 문서는 ISO 표준 C++을 만드는 가이드라인들을 모아둔 것이다.
 
-##### Note
+##### 비고
 
-There are environments where extensions are necessary, e.g., to access system resources.
-In such cases, localize the use of necessary extensions and control their use with non-core Coding Guidelines.  If possible, build interfaces that encapsulate the extensions so they can be turned off or compiled away on systems that do not support those extensions.
+시스템 리소스에 접근하는 등의 작업을 수행하기 위해서 확장 기능이 필요할 수 있다.
+이런 경우에는 필요한 확장 기능을 지역적으로 제한해서 사용하고, 비핵심 코딩 가이드라인을 활용해 관리하라.
+If possible, build interfaces that encapsulate the extensions so they can be turned off or compiled away on systems that do not support those extensions.
 
 Extensions often do not have rigorously defined semantics.  Even extensions that
 are common and implemented by multiple compilers may have slightly different
@@ -464,167 +463,171 @@ behaviors and edge case behavior as a direct result of *not* having a rigorous
 standard definition.  With sufficient use of any such extension, expected
 portability will be impacted.
 
-##### Note
+##### 비고
 
 Using valid ISO C++ does not guarantee portability (let alone correctness).
 Avoid dependence on undefined behavior (e.g., [undefined order of evaluation](#Res-order))
 and be aware of constructs with implementation defined meaning (e.g., `sizeof(int)`).
 
-##### Note
+##### 비고
 
-There are environments where restrictions on use of standard C++ language or library features are necessary, e.g., to avoid dynamic memory allocation as required by aircraft control software standards.
-In such cases, control their (dis)use with an extension of these Coding Guidelines customized to the specific environment.
+표준 C++ 언어의 기능이나 라이브러리조차 제한적으로 사용할 수 밖에 없는 환경도 있다.
+예를 들면, 항공기 제어 소프트웨어 개발 표준에는 동적 메모리 할당을 피할 것을 주문하고 있다. 
+이런 경우에는 특정 환경에 맞춘 코딩 가이드라인을 확장해서 사용하거나 사용하지 않아야 하는 기능들을 관리하라.
 
-##### Enforcement
+##### 적용
 
-Use an up-to-date C++ compiler (currently C++11 or C++14) with a set of options that do not accept extensions.
+확장을 허용하지 않도록 기능 설정이 가능한 최신 C++ 컴파일러(현재 C++11이나 C++14)를 사용하라.
 
-### <a name="Rp-what"></a>P.3: Express intent
+### <a name="Rp-what"></a>P.3: 의도를 표현하라
 
-##### Reason
+##### 이유
 
-Unless the intent of some code is stated (e.g., in names or comments), it is impossible to tell whether the code does what it is supposed to do.
+(이름이나 주석을 통해) 코드의 의도를 제대로 드러내지 못한다면, 코드가 제대로 수행되는지조차 말할 수 없을 것이다.
 
-##### Example
+##### 예제
 
     int i = 0;
     while (i < v.size()) {
         // ... do something with v[i] ...
     }
 
-The intent of "just" looping over the elements of `v` is not expressed here. The implementation detail of an index is exposed (so that it might be misused), and `i` outlives the scope of the loop, which may or may not be intended. The reader cannot know from just this section of code.
+위 코드만 보았을 때는 `v`의 각 요소를 순회하겠다는 의도가 드러나지 않는다.
+인덱스에 대한 세부적인 구현부가 노출된다 (따라서 잘못 사용될 지도 모른다). 그리고 의도적인지는 알 수 없지만 `i`를 반복문 밖에서도 여전히 사용할 수 있다. 이 부분의 코드만 읽어서는 그 의도를 알지 못한다.
 
-Better:
+개선:
 
     for (const auto& x : v) { /* do something with x */ }
 
-Now, there is no explicit mention of the iteration mechanism, and the loop operates on a reference to `const` elements so that accidental modification cannot happen. If modification is desired, say so:
+위 코드를 보면 v에 대한 순회 메커니즘을 명시적으로 언급하지 않는다. 그리고 순회하는 동안 v의 각 `const` 요소의 레퍼런스에 대해 동작이 일어나기 때문에 각 요소를 수정할 수 없다. 만약 수정이 필요한 경우라면 아래와 같이 코드를 작성해야 한다.
 
     for (auto& x : v) { /* do something with x */ }
 
-Sometimes better still, use a named algorithm:
+이전보다 개선되었지만, 이보다는 잘 알려진 알고리즘을 사용하라.
 
     for_each(v, [](int x) { /* do something with x */ });
-    for_each(parallel.v, [](int x) { /* do something with x */ });
+    for_each(par, v, [](int x) { /* do something with x */ });
 
-The last variant makes it clear that we are not interested in the order in which the elements of `v` are handled.
+마지막 예는 `v`의 각 요소가 처리되는 순서에 관심이 없다는 점을 명확히 하고 있다.
 
-A programmer should be familiar with
+프로그래머라면 다음에 익숙해져야 한다.
 
-* [The guideline support library](#S-gsl)
-* [The ISO C++ standard library](#S-stdlib)
-* Whatever foundation libraries are used for the current project(s)
+* [가이드라인 지원 라이브러리](#S-gsl)
+* [ISO C++ 표준 라이브러리](#S-stdlib)
+* 현재 프로젝트에서 사용되고 있는 모든 기본 라이브러리들
 
-##### Note
+##### 비고
 
-Alternative formulation: Say what should be done, rather than just how it should be done.
+공식 대안: 어떻게 작업이 수행되는지를 말하지 말고 무엇이 수행될지를 말하라.
 
-##### Note
+##### 비고
 
-Some language constructs express intent better than others.
+언어의 기본 요소는 다른 무엇보다도 그 의도를 더 잘 표현한다.
 
-##### Example
+##### 예제
 
-If two `int`s are meant to be the coordinates of a 2D point, say so:
+2개의 `int` 값으로 2차원 좌표를 표현하고 싶다면, 다음과 같이 써라.
 
-      draw_line(int, int, int, int);  // obscure
-      draw_line(Point, Point);        // clearer
+    draw_line(int, int, int, int);  // obscure
+    draw_line(Point, Point);        // clearer
 
-##### Enforcement
+##### 적용
 
-Look for common patterns for which there are better alternatives
+좀 더 나은 대안이 있는 범용적인 패턴을 찾아보라.
 
-* simple `for` loops vs. range-`for` loops
-* `f(T*, int)` interfaces vs. `f(span<T>)` interfaces
-* loop variables in too large a scope
-* naked `new` and `delete`
-* functions with many arguments of built-in types
+* 단순한 `for`문 대 범위 기반 `for`문
+* `f(T*, int)` 인터페이스 대 `f(span<T>)` 인터페이스
+* 아주 큰 스코프에서 순회하는 변수
+* 처리되지 않은 `new`와 `delete`
+* 인자로 내장 타입을 여러개 갖는 함수
 
 There is a huge scope for cleverness and semi-automated program transformation.
 
-### <a name="Rp-typesafe"></a>P.4: Ideally, a program should be statically type safe
+### <a name="Rp-typesafe"></a>P.4: 이상적으로 프로그램은 정적으로 타입 안전해야 한다
 
-##### Reason
+##### 이유
 
-Ideally, a program would be completely statically (compile-time) type safe.
-Unfortunately, that is not possible. Problem areas:
+이상적으로 프로그램은 완전히 정적으로 타입 안전해야 한다.
+하지만 불행하게도 불가능하다. 왜냐하면 다음처럼 문제가 되는 영역들이 존재하기 때문이다.
 
-* unions
-* casts
-* array decay
-* range errors
-* narrowing conversions
+* 공용체
+* 타입 변환
+* 배열 붕괴
+* 범위 오류
+* 축소 타입 변환
 
-##### Note
+##### 비고
 
-These areas are sources of serious problems (e.g., crashes and security violations).
-We try to provide alternative techniques.
+이러한 영역들은 심각한 문제의 원인이 된다. (예를 들어, 크래시와 보안 위반)
+따라서 다른 기법을 제공하고자 한다.
 
-##### Enforcement
+##### 적용
 
-We can ban, restrain, or detect the individual problem categories separately, as required and feasible for individual programs.
-Always suggest an alternative.
-For example:
+각 프로그램에 대해 필요하고 실현 가능하도록 각 문제 범주를 개별적으로 금지, 억제 또는 탐지할 수 있다.
+항상 대안을 제시하라.
+예를 들어,
 
-* unions -- use `variant` (in C++17)
-* casts -- minimize their use; templates can help
-* array decay -- use `span` (from the GSL)
-* range errors -- use `span`
-* narrowing conversions -- minimize their use and use `narrow` or `narrow_cast` (from the GSL) where they are necessary
+* 공용체 -- (C++17에 있는) `variant`를 사용하라.
+* 타입 변환 -- 사용을 최소화하라. 템플릿이 도움이 될 수 있다.
+* 배열 붕괴 -- (GSL에 있는) `span`을 사용하라.
+* 범위 오류 -- `span`을 사용하라.
+* 축소 타입 변환 -- 사용을 최소화하라. 필요하면 `narrow`나 (GSL에 있는) `narrow_cast`를 사용하라.
 
-### <a name="Rp-compile-time"></a>P.5: Prefer compile-time checking to run-time checking
+### <a name="Rp-compile-time"></a>P.5: 런타임 검사보다는 컴파일 타임 검사를 선호하라
 
-##### Reason
+##### 이유
 
-Code clarity and performance.
-You don't need to write error handlers for errors caught at compile time.
+코드 명확성, 성능 향상.
+컴파일 타임에 발견되는 오류에 대해서는 처리하는 부분을 따로 작성할 필요가 없다.
 
-##### Example
+##### 예제
 
     // Int is an alias used for integers
     int bits = 0;         // don't: avoidable code
-    for (int i = 1; i; i <<= 1)
+    for (Int i = 1; i; i <<= 1)
         ++bits;
     if (bits < 32)
         cerr << "Int too small\n"
 
-This example is easily simplified
+이 예제는 다음과 같이 간단하게 만들 수 있다.
 
     // Int is an alias used for integers
     static_assert(sizeof(Int) >= 4);    // do: compile-time check
 
-##### Example
+##### 예제
 
     void read(int* p, int n);   // read max n integers into *p
 
     int a[100];
     read(a, 1000);    // bad
 
-better
+개선:
 
     void read(span<int> r); // read into the range of integers r
 
     int a[100];
     read(a);        // better: let the compiler figure out the number of elements
 
-**Alternative formulation**: Don't postpone to run time what can be done well at compile time.
+**대체 표현**: 컴파일 타임에 할 수 있는 것을 런타임으로 연기하지 마라.
 
-##### Enforcement
+##### 적용
 
-* Look for pointer arguments.
-* Look for run-time checks for range violations.
+* 포인터 인자를 찾아라.
+* 범위 위반에 대한 런타임 검사를 찾아라.
 
-### <a name="Rp-run-time"></a>P.6: What cannot be checked at compile time should be checkable at run time
+### <a name="Rp-run-time"></a>P.6: 컴파일 타임에 검사할 수 없다면 런타임에 검사할 수 있어야 한다
 
-##### Reason
+##### 이유
 
-Leaving hard-to-detect errors in a program is asking for crashes and bad results.
+프로그램 안에 찾기 어려운 오류를 남겨둔다면 크래시나 나쁜 결과를 야기한다.
 
-##### Note
+##### 비고
 
-Ideally we catch all errors (that are not errors in the programmer's logic) at either compile-time or run-time. It is impossible to catch all errors at compile time and often not affordable to catch all remaining errors at run time. However, we should endeavor to write programs that in principle can be checked, given sufficient resources (analysis programs, run-time checks, machine resources, time).
+이상적으로 우리는 컴파일 타임, 런타임에 (프로그래머의 논리에서는 오류가 아닌) 모든 오류를 찾을 수 있다.
+컴파일 타임에 모든 오류를 찾아내는 건 불가능하고 런타임에 남아 있는 모든 오류를 찾는 것도 불가능하다.
+그러나 충분한 리소스를 준다면 원론적으로 검사 가능한 프로그램을 작성하려고 노력해야 한다. (분석 프로그램, 런타임 검사, 컴퓨터 리소스, 시간)
 
-##### Example, bad
+##### 나쁜 예제
 
     // separately compiled, possibly dynamically loaded
     extern void f(int* p);
@@ -635,11 +638,13 @@ Ideally we catch all errors (that are not errors in the programmer's logic) at e
         f(new int[n]);
     }
 
-Here, a crucial bit of information (the number of elements) has been so thoroughly "obscured" that static analysis is probably rendered infeasible and dynamic checking can be very difficult when `f()` is part of an ABI so that we cannot "instrument" that pointer. We could embed helpful information into the free store, but that requires global changes to a system and maybe to the compiler. What we have here is a design that makes error detection very hard.
+여기서 결정적인 정보(요소의 갯수)가 아주 철저하게 숨겨져 있어서, `f()`가 ABI의 일부일 때 정적 분석은 아마도 불가능해 보이고 동적 검사는 매우 어려울 수 있다. 따라서 해당 포인터를 "측정"할 수 없다.
+도움이 될만한 정보를 남은 공간에 넣을 수 있지만, 이는 시스템이나 컴파일러에게 전반적인 변경을 요구한다.
+예제에 있는 코드는 오류 발견을 아주 어렵게 만드는 디자인이다.
 
-##### Example, bad
+##### 나쁜 예제
 
-We can of course pass the number of elements along with the pointer:
+포인터와 함께 요소의 갯수도 같이 전달할 수 있다.
 
     // separately compiled, possibly dynamically loaded
     extern void f2(int* p, int n);
@@ -649,13 +654,14 @@ We can of course pass the number of elements along with the pointer:
         f2(new int[n], m);  // bad: a wrong number of elements can be passed to f()
     }
 
-Passing the number of elements as an argument is better (and far more common) than just passing the pointer and relying on some (unstated) convention for knowing or discovering the number of elements. However (as shown), a simple typo can introduce a serious error. The connection between the two arguments of `f2()` is conventional, rather than explicit.
+인자로 요소의 갯수를 전달하는 것은 포인터를 전달하면서 관례에 따라 요소의 갯수를 구하는 것보다 낫다.
+그러나, 단순히 철자 하나만 틀려도 심각한 오류를 야기한다. `f2()`에서 두 인자간의 연결은 구체적이지 않고 관례에 따른 것이다.
 
-Also, it is implicit that `f2()` is supposed to `delete` its argument (or did the caller make a second mistake?).
+게다가 `f2()`가 인자를 `delete`할 것인지 알 수 없다. (호출자가 두번째 실수를 한 것인가?)
 
-##### Example, bad
+##### 나쁜 예제
 
-The standard library resource management pointers fail to pass the size when they point to an object:
+표준 라이브러리에 있는 리소스 관리 포인터는 개체를 가리키고 있을 때 크기를 넘길 수 없다.
 
     // separately compiled, possibly dynamically loaded
     // NB: this assumes the calling code is ABI-compatible, using a
@@ -667,9 +673,9 @@ The standard library resource management pointers fail to pass the size when the
         f3(make_unique<int[]>(n), m);    // bad: pass ownership and size separately
     }
 
-##### Example
+##### 예제
 
-We need to pass the pointer and the number of elements as an integral object:
+포인터와 요소의 갯수를 하나의 개체로 합쳐서 전달해야 한다.
 
     extern void f4(vector<int>&);   // separately compiled, possibly dynamically loaded
     extern void f4(span<int>);      // separately compiled, possibly dynamically loaded
@@ -683,11 +689,11 @@ We need to pass the pointer and the number of elements as an integral object:
         f4(span<int>{v});          // pass a view, retain ownership
     }
 
-This design carries the number of elements along as an integral part of an object, so that errors are unlikely and dynamic (run-time) checking is always feasible, if not always affordable.
+이 디자인은 개체의 필수 부분으로 요소의 갯수를 전달하므로 오류가 발생하지 않고 항상 저렴하지는 않지만 동적(런타임) 검사를 할 수 있다. 
 
-##### Example
+##### 예제
 
-How do we transfer both ownership and all information needed for validating use?
+올바른 사용을 위해 어떻게 소유권과 모든 정보를 전달할 것인가?
 
     vector<int> f5(int n)    // OK: move
     {
@@ -710,25 +716,25 @@ How do we transfer both ownership and all information needed for validating use?
         return p;
     }
 
-##### Example
+##### 예제
 
 * ???
-* show how possible checks are avoided by interfaces that pass polymorphic base classes around, when they actually know what they need?
-  Or strings as "free-style" options
+* 필요한 것을 실제로 알고 있을 때, 다형 기본 클래스를 전달하는 인터페이스가 어떻게 검사를 피할 수 있는지 보여준다.
+  또는 "자유형" 옵션으로 문자열이 있다. 
 
-##### Enforcement
+##### 적용
 
-* Flag (pointer, count)-style interfaces (this will flag a lot of examples that can't be fixed for compatibility reasons)
+* (포인터, 갯수)-스타일 인터페이스라면 표시한다. (호환성을 이유로 고칠 수 없는 많은 예제를 표시할 것이다.)
 * ???
 
-### <a name="Rp-early"></a>P.7: Catch run-time errors early
+### <a name="Rp-early"></a>P.7: 런타임 오류는 초기에 잡아라
 
-##### Reason
+##### 이유
 
-Avoid "mysterious" crashes.
-Avoid errors leading to (possibly unrecognized) wrong results.
+"미스터리"한 크래시를 피한다.
+(아마 몰랐을 수도 있는) 잘못된 결과를 야기하는 오류를 피한다.
 
-##### Example
+##### 예제
 
     void increment1(int* p, int n)    // bad: error prone
     {
@@ -745,10 +751,10 @@ Avoid errors leading to (possibly unrecognized) wrong results.
         // ...
     }
 
-Here we made a small error in `use1` that will lead to corrupted data or a crash.
-The (pointer, count)-style interface leaves `increment1()` with no realistic way of defending itself against out-of-range errors.
-Assuming that we could check subscripts for out of range access, the error would not be discovered until `p[10]` was accessed.
-We could check earlier and improve the code:
+여기서 우리는 `use1`에 데이터가 손실되거나 크래시를 야기할 수 있는 작은 오류를 범했다.
+(포인터, 크기)-스타일 인터페이스는 범위 오류에 대해 `increment1()`에서 방어할 수 있는 현실적인 방안을 없애버린다.
+배열 첨자가 범위를 벗어나는지 검사한다고 가정하면, `p[10]`까지 오류가 발견되지 않을 것이다.
+좀 더 빨리 검사하도록 코드를 개선해 보자:
 
     void increment2(span<int> p)
     {
@@ -764,8 +770,8 @@ We could check earlier and improve the code:
         // ...
     }
 
-Now, `m<=n` can be checked at the point of call (early) rather than later.
-If all we had was a typo so that we meant to use `n` as the bound, the code could be further simplified (eliminating the possibility of an error):
+이제 `m<=n`은 호출 시점에서 (일찍) 확인할 수 있다.
+우리가 가진 모든 것이 오타이므로 `n`을 범위로 사용한다면, 코드를 더 단순하게 만들 수 있다. (오류의 가능성 제거)
 
     void use3(int m)
     {
@@ -776,9 +782,9 @@ If all we had was a typo so that we meant to use `n` as the bound, the code coul
         // ...
     }
 
-##### Example, bad
+##### 나쁜 예제
 
-Don't repeatedly check the same value. Don't pass structured data as strings:
+동일한 값을 반복적으로 검사하지 마라. 구조화된 데이터를 문자열로 넘기지 마라.
 
     Date read_date(istream& is);    // read date from istream
 
@@ -798,12 +804,13 @@ Don't repeatedly check the same value. Don't pass structured data as strings:
         // ...
     }
 
-The date is validated twice (by the `Date` constructor) and passed as a character string (unstructured data).
+(`Date` 생성자에 의해) 날짜가 두 번 계산되고 (비구조화된 데이터인) 문자열로 전달된다.
 
-##### Example
+##### 예제
 
-Excess checking can be costly.
-There are cases where checking early is dumb because you may not ever need the value, or may only need part of the value that is more easily checked than the whole.  Similarly, don't add validity checks that change the asymptotic behavior of your interface (e.g., don't add a `O(n)` check to an interface with an average complexity of `O(1)`).
+지나친 검사는 비용이 많이 든다.
+값이 필요한지도 모르기 때문에 일찍 검사하는 것이 안 좋은 경우도 있고 전체가 아닌 값의 일부만 검사하는 것이 쉬운 경우도 있다.
+Similarly, don't add validity checks that change the asymptotic behavior of your interface (e.g., don't add a `O(n)` check to an interface with an average complexity of `O(1)`).
 
     class Jet {    // Physics says: e * e < x * x + y * y + z * z
         float x;
@@ -826,26 +833,26 @@ There are cases where checking early is dumb because you may not ever need the v
         ???
     };
 
-The physical law for a jet (`e * e < x * x + y * y + z * z`) is not an invariant because of the possibility for measurement errors.
+제트기에 대한 물리적 법칙(`e * e < x * x + y * y + z * z`)은 측정 오류의 가능성 때문에 값이 바뀔 수 있다.
 
 ???
 
-##### Enforcement
+##### 적용
 
-* Look at pointers and arrays: Do range-checking early and not repeatedly
-* Look at conversions: Eliminate or mark narrowing conversions
-* Look for unchecked values coming from input
-* Look for structured data (objects of classes with invariants) being converted into strings
+* 포인터와 배열을 찾아라: 범위를 빨리 검사하고 반복되지 않게 하라.
+* 타입 변환을 찾아라: 축소 변환을 표시하거나 제거하라.
+* 입력된 값 중 검사되지 않은 값을 찾아라.
+* 문자열로 변환되고 있는 구조화된 데이터(불변 조건을 갖는 클래스의 개체)를 찾아라.
 * ???
 
-### <a name="Rp-leak"></a>P.8: Don't leak any resources
+### <a name="Rp-leak"></a>P.8: 리소스가 새도록 하지 마라
 
-##### Reason
+##### 이유
 
 Even a slow growth in resources will, over time, exhaust the availability of those resources.
 This is particularly important for long-running programs, but is an essential piece of responsible programming behavior.
 
-##### Example, bad
+##### 나쁜 예제
 
     void f(char* name)
     {
@@ -856,7 +863,7 @@ This is particularly important for long-running programs, but is an essential pi
         fclose(input);
     }
 
-Prefer [RAII](#Rr-raii):
+[RAII](#Rr-raii)를 사용해 개선:
 
     void f(char* name)
     {
@@ -866,9 +873,9 @@ Prefer [RAII](#Rr-raii):
         // ...
     }
 
-**See also**: [The resource management section](#S-resource)
+**참고 항목**: [리소스 관리](#S-resource)
 
-##### Note
+##### 비고
 
 A leak is colloquially "anything that isn't cleaned up."
 The more important classification is "anything that can no longer be cleaned up."
@@ -877,32 +884,32 @@ This rule should not be taken as requiring that allocations within long-lived ob
 For example, relying on system guaranteed cleanup such as file closing and memory deallocation upon process shutdown can simplify code.
 However, relying on abstractions that implicitly clean up can be as simple, and often safer.
 
-##### Note
+##### 비고
 
 Enforcing [the lifetime profile](#In.force) eliminates leaks.
 When combined with resource safety provided by [RAII](#Rr-raii), it eliminates the need for "garbage collection" (by generating no garbage).
 Combine this with enforcement of [the type and bounds profiles](#In.force) and you get complete type- and resource-safety, guaranteed by tools.
 
-##### Enforcement
+##### 적용
 
-* Look at pointers: Classify them into non-owners (the default) and owners.
-  Where feasible, replace owners with standard-library resource handles (as in the example above).
-  Alternatively, mark an owner as such using `owner` from [the GSL](#S-gsl).
-* Look for naked `new` and `delete`
-* Look for known resource allocating functions returning raw pointers (such as `fopen`, `malloc`, and `strdup`)
+* 포인터를 살펴봐라: 소유자와 비소유자로 구분해라.
+  가능하다면 소유자를 (위의 예제처럼) 표준 라이브러리 리소스 핸들로 바꿔라.
+  또는 [GSL](#S-gsl)에서 `owner`를 사용하는 것처럼 소유자를 표시하라.
+* 처리되지 않은 `new`, `delete`를 찾아라.
+* 처리되지 않은 포인터를 반환하는 잘 알려진 리소스 할당 함수를 찾아라. (예를 들어, `fopen`, `malloc`, `strdup`)
 
-### <a name="Rp-waste"></a>P.9: Don't waste time or space
+### <a name="Rp-waste"></a>P.9: 시간이나 공간을 낭비하지 마라
 
-##### Reason
+##### 이유
 
-This is C++.
+이것이 C++이다.
 
-##### Note
+##### 비고
 
-Time and space that you spend well to achieve a goal (e.g., speed of development, resource safety, or simplification of testing) is not wasted.
+개발 속도, 리소스 안정성, 테스트 단순화 등의 목표를 달성하기 위해 소모하는 시간이나 공간은 낭비가 아니다.
 "Another benefit of striving for efficiency is that the process forces you to understand the problem in more depth." - Alex Stepanov
 
-##### Example, bad
+##### 나쁜 예제
 
     struct X {
         char ch;
@@ -936,14 +943,14 @@ Time and space that you spend well to achieve a goal (e.g., speed of development
         // ...
     }
 
-Yes, this is a caricature, but we have seen every individual mistake in production code, and worse.
-Note that the layout of `X` guarantees that at least 6 bytes (and most likely more) bytes are wasted.
-The spurious definition of copy operations disables move semantics so that the return operation is slow
+그렇다. 풍자를 위한 예제이기는 하지만, 실제 코드에서 이보다 심각한 실수도 본 적이 있다.
+`X`의 레이아웃에 (더 많을지도 모르지만) 적어도 6바이트의 낭비가 있다는 점을 주목하라.
+복사 동작을 그럴싸하게 정의해 두다 보니 이동의 의미가 없어져 버렸다. 그래서 반환 동작이 느려졌다.
 (please note that the Return Value Optimization, RVO, is not guaranteed here).
-The use of `new` and `delete` for `buf` is redundant; if we really needed a local string, we should use a local `string`.
-There are several more performance bugs and gratuitous complication.
+`buf`에서 `new`, `delete`의 사용이 중복된다. 진짜 지역 문자열을 원했다면, `string` 지역 변수를 사용했을 것이다.
+더 많은 성능 버그와 상황을 더 복잡하게 만드는 불필요한 문제가 있다.
 
-##### Example, bad
+##### 나쁜 예제
 
     void lower(zstring s)
     {
@@ -953,16 +960,16 @@ There are several more performance bugs and gratuitous complication.
 Yes, this is an example from production code.
 We leave it to the reader to figure out what's wasted.
 
-##### Note
+##### 비고
 
-An individual example of waste is rarely significant, and where it is significant, it is typically easily eliminated by an expert.
-However, waste spread liberally across a code base can easily be significant and experts are not always as available as we would like.
-The aim of this rule (and the more specific rules that support it) is to eliminate most waste related to the use of C++ before it happens.
-After that, we can look at waste related to algorithms and requirements, but that is beyond the scope of these guidelines.
+낭비에 대한 각 예제는 별로 중요하지 않다. 그리고 중요했다면 이미 전문가들이 쉽게 제거했을 것이다.
+그러나 코드 전체에 걸쳐 낭비가 퍼져버리면 중요해 질 수 있고, 낭비를 제거하기 위해서 전문가들을 항상 원하는데로 데려올 수는 없다.
+이 규칙(그리고 보다 구체적인 규칙)의 목적은 C++ 사용과 관련된 대부분의 낭비를 없애기 위해서다.
+그 후에 알고리즘이나 요구 사항과 관련된 낭비를 살펴볼 수 있다. 하지만 그건 이 가이드라인의 범위를 벗어난다.
 
-##### Enforcement
+##### 적용
 
-Many more specific rules aim at the overall goals of simplicity and elimination of gratuitous waste.
+더 많은 특정 규칙들은 단순함과 쓸데없는 코드의 제거를 전반적인 목표로 하고 있다.
 
 ### <a name="Rp-mutable"></a>P.10: Prefer immutable data to mutable data
 
@@ -987,17 +994,28 @@ Messy, low-level code breeds more such code.
 
     int sz = 100;
     int* p = (int*) malloc(sizeof(int) * sz);
+    int count = 0;
     // ...
-    if (count == sz)
-        p = (int*) realloc(p, sizeof(int) * sz * 2);
-    // ...
+    for (;;) {
+        // ... read an int into x, exit loop if end of file is reached ...
+        // ... check that x is valid ...
+        if (count == sz)
+            p = (int*) realloc(p, sizeof(int) * sz * 2);
+        p[count++] = x;
+        // ...
+    }
 
 This is low-level, verbose, and error-prone.
+For example, we "forgot" to test for memory exhaustion.
 Instead, we could use `vector`:
 
-    vector<int> v(100);
-
-    v.push_back(yet_another)int);
+    vector<int> v;
+    v.reserve(100);
+    // ...
+    for (int x; cin >> x; ) {
+        // ... check that x is valid ...
+        v.push_back(x);
+    }
 
 ##### Note
 
@@ -1014,91 +1032,93 @@ This is a variant of the [subset of superset principle](#R0) that underlies thes
 * Look for "messy code" such as complex pointer manipulation and casting outside the implementation of abstractions.
 
 
-# <a name="S-interfaces"></a>I: Interfaces
+# <a name="S-interfaces"></a>I(Interfaces): 인터페이스 
 
-An interface is a contract between two parts of a program. Precisely stating what is expected of a supplier of a service and a user of that service is essential.
-Having good (easy-to-understand, encouraging efficient use, not error-prone, supporting testing, etc.) interfaces is probably the most important single aspect of code organization.
+인터페이스는 프로그램 두 부분 사이의 계약이다. 서비스의 공급자와 사용자가 기대하는 바를 정확하게 기술하는 것이 핵심이다.
+(이해하기 쉽고, 효율적인 사용을 장려하고, 쉽게 오류가 발생하지 않고, 테스트를 지원하는 등) 좋은 인터페이스는 아마도 코드 구성 중에서 가장 중요한 요소 중 하나다.
 
-Interface rule summary:
+인터페이스 규칙 요약:
 
-* [I.1: Make interfaces explicit](#Ri-explicit)
-* [I.2: Avoid global variables](#Ri-global)
-* [I.3: Avoid singletons](#Ri-singleton)
-* [I.4: Make interfaces precisely and strongly typed](#Ri-typed)
-* [I.5: State preconditions (if any)](#Ri-pre)
-* [I.6: Prefer `Expects()` for expressing preconditions](#Ri-expects)
-* [I.7: State postconditions](#Ri-post)
-* [I.8: Prefer `Ensures()` for expressing postconditions](#Ri-ensures)
-* [I.9: If an interface is a template, document its parameters using concepts](#Ri-concepts)
-* [I.10: Use exceptions to signal a failure to perform a required tasks](#Ri-except)
-* [I.11: Never transfer ownership by a raw pointer (`T*`)](#Ri-raw)
-* [I.12: Declare a pointer that must not be null as `not_null`](#Ri-nullptr)
-* [I.13: Do not pass an array as a single pointer](#Ri-array)
+* [I.1: 인터페이스를 명확하게 만들어라](#Ri-explicit)
+* [I.2: 전역 변수를 피하라](#Ri-global)
+* [I.3: 싱글톤을 피하라](#Ri-singleton)
+* [I.4: 인터페이스를 정확하게, 강타입으로 만들어라](#Ri-typed)
+* [I.5: (있다면) 사전 조건을 기술하라](#Ri-pre)
+* [I.6: 사전 조건을 표현하고 싶다면 `Expects()`를 사용하라](#Ri-expects)
+* [I.7: 사후 조건을 기술하라](#Ri-post)
+* [I.8: 사후 조건을 표현하고 싶다면 `Ensures()`를 사용하라](#Ri-ensures)
+* [I.9: 인터페이스가 템플릿이라면 컨셉(Concept)을 사용해서 매개 변수를 문서화하라](#Ri-concepts)
+* [I.10: 요구된 작업의 수행 실패를 알리기 위해 예외를 사용하라](#Ri-except)
+* [I.11: 처리되지 않은 포인터(`T*`)로 소유권을 넘기지 마라](#Ri-raw)
+* [I.12: NULL이 될 수 없는 포인터는 `not_null`로 선언하라](#Ri-nullptr)
+* [I.13: 배열을 단일 포인터로 전달하지 마라](#Ri-array)
 * [I.22: Avoid complex initialization of global objects](#Ri-global-init)
-* [I.23: Keep the number of function arguments low](#Ri-nargs)
-* [I.24: Avoid adjacent unrelated parameters of the same type](#Ri-unrelated)
-* [I.25: Prefer abstract classes as interfaces to class hierarchies](#Ri-abstract)
-* [I.26: If you want a cross-compiler ABI, use a C-style subset](#Ri-abi)
+* [I.23: 함수 인자 갯수를 최소로 유지하라](#Ri-nargs)
+* [I.24: 관련없는 동일 타입의 인접한 매개 변수는 피하라](#Ri-unrelated)
+* [I.25: 인터페이스로 클래스 계층보다는 추상 클래스를 사용하라](#Ri-abstract)
+* [I.26: 크로스 컴파일러 ABI를 원한다면 C 스타일 코드를 사용하라](#Ri-abi)
 
-See also
+참고할 만한 내용:
 
-* [F: Functions](#S-functions)
-* [C.concrete: Concrete types](#SS-concrete)
-* [C.hier: Class hierarchies](#SS-hier)
-* [C.over: Overloading and overloaded operators](#SS-overload)
-* [C.con: Containers and other resource handles](#SS-containers)
-* [E: Error handling](#S-errors)
-* [T: Templates and generic programming](#S-templates)
+* [F(Functions): 함수](#S-functions)
+* [C.concrete: 실제 타입](#SS-concrete)
+* [C.hier: 클래스 계층](#SS-hier)
+* [C.over: 오버로딩과 오버로딩된 연산자](#SS-overload)
+* [C.con: 컨테이너와 다른 리소스 핸들](#SS-containers)
+* [E: 오류 처리](#S-errors)
+* [T: 템플릿과 제너릭 프로그래밍](#S-templates)
 
-### <a name="Ri-explicit"></a>I.1: Make interfaces explicit
+### <a name="Ri-explicit"></a>I.1: 인터페이스를 명확하게 만들어라
 
-##### Reason
+##### 이유
 
-Correctness. Assumptions not stated in an interface are easily overlooked and hard to test.
+정확성. 인터페이스에 언급되지 않은 가정은 간과되기 쉽고 테스트하기 어렵다.
 
-##### Example, bad
+##### 나쁜 예제
 
-Controlling the behavior of a function through a global (namespace scope) variable (a call mode) is implicit and potentially confusing. For example:
+전역 (네임스페이스 범위에 있는) 변수를 통해 함수의 행동을 제어하는 것은 암시적이고 혼란스럽다. 예를 들어,
 
     int rnd(double d)
     {
         return (rnd_up) ? ceil(d) : d;    // don't: "invisible" dependency
     }
 
-It will not be obvious to a caller that the meaning of two calls of `rnd(7.2)` might give different results.
+`rnd(7.2)`를 두 번 호출해서 서로 다른 결과가 발생한다면 호출하는 입장에서는 함수의 의미를 명확하게 알지 못할 것이다.
 
-**Exception**: Sometimes we control the details of a set of operations by an environment variable, e.g., normal vs. verbose output or debug vs. optimized.
-The use of a non-local control is potentially confusing, but controls only implementation details of otherwise fixed semantics.
+##### 예외
 
-##### Example, bad
+때때로 우리는 환경 변수를 통해 연산의 세부 사항을 제어한다. 예를 들어, 일반적인 출력 대 상세한 출력, 디버그 대 최적화 등이 있다.
+전역 제어를 사용하면 잠재적인 문제가 있기는 하지만, 그렇게 하지 않으면 고정되었을 의도를 구현하는데 세밀하게 제어할 수 있다.
 
-Reporting through non-local variables (e.g., `errno`) is easily ignored. For example:
+##### 나쁜 예제
+
+`errno`와 같이 전역 변수를 통해 오류를 보고하는 것은 무시되기 쉽다. 예를 들어,
 
     // don't: no test of printf's return value
     fprintf(connection, "logging: %d %d %d\n", x, y, s);
 
-What if the connection goes down so that no logging output is produced? See I.??.
+만약 연결(connection)이 다운되어 로그가 만들어지지 않는다면 어떨까? I.?? 규칙을 봐라.
 
-**Alternative**: Throw an exception. An exception cannot be ignored.
+**대안**: 예외를 발생시켜라. 예외는 무시할 수 없다.
 
-**Alternative formulation**: Avoid passing information across an interface through non-local or implicit state.
-Note that non-`const` member functions pass information to other member functions through their object's state.
+**공식 대안**: 전역 또는 암시적 상태의 값을 통해 인터페이스로 정보가 전달되는 것을 피하라.
+`const`가 아닌 멤버 함수는 개체의 상태를 통해 다른 멤버 함수에게 정보를 전달한다는 점을 참고하라. 
 
-**Alternative formulation**: An interface should be a function or a set of functions.
-Functions can be template functions and sets of functions can be classes or class templates.
+**공식 대안**: 인터페이스는 함수나 함수의 집합이어야 한다.
+함수는 템플릿 함수일 수 있고 함수 집합은 클래스나 클래스 템플릿일 수 있다.
 
-##### Enforcement
+##### 적용
 
-* (Simple) A function should not make control-flow decisions based on the values of variables declared at namespace scope.
-* (Simple) A function should not write to variables declared at namespace scope.
+* (간단함) 함수는 네임스페이스 범위에서 선언된 변수 값에 따라 제어 흐름을 결정해서는 안된다.
+* (간단함) 함수는 네임스페이스 범위에서 선언된 변수에 값을 저장해서는 안된다.
 
-### <a name="Ri-global"></a>I.2 Avoid global variables
+### <a name="Ri-global"></a>I.2: 전역 변수를 피하라
 
-##### Reason
+##### 이유
 
-Non-`const` global variables hide dependencies and make the dependencies subject to unpredictable changes.
+const가 아닌 전역 변수는 의존성을 숨기고 예측하지 못한 변화에 의존하게 만든다.
 
-##### Example
+##### 예제
 
     struct Data {
         // ... lots of stuff ...
@@ -1114,55 +1134,55 @@ Non-`const` global variables hide dependencies and make the dependencies subject
         // ... use data ...
     }
 
-Who else might modify `data`?
+다른 누군가가 `data`를 수정할 수 있는가?
 
-##### Note
+##### 비고
 
-Global constants are useful.
+전역 상수는 유용하다.
 
-##### Note
+##### 비고
 
-The rule against global variables applies to namespace scope variables as well.
+전역 변수에 반하는 규칙은 네임스페이스 스코프의 변수에도 동일하게 적용한다.
 
-**Alternative**: If you use global (more generally namespace scope data) to avoid copying, consider passing the data as an object by reference to `const`.
-Another solution is to define the data as the state of some object and the operations as member functions.
+**대안**: 복사를 피하기 위해 전역 변수(좀 더 일반화해서 네임스페이스 스코프의 데이터)를 사용한다면 `const` 레퍼런스로 개체를 전달하는 것을 고려하라.
+다른 해결책은 개체의 상태로서의 데이터와 멤버 함수로서의 연산을 정의하는 것이다. 
 
-**Warning**: Beware of data races: If one thread can access nonlocal data (or data passed by reference) while another thread executes the callee, we can have a data race.
+**경고**: 데이터 경합을 조심하라. 하나의 스레드가 실행되는 동안 다른 스레드가 전역 데이터(또는 레퍼런스로 전달된 데이터)에 접근하려고 한다면, 데이터 경합이 발생할 수 있다.
 Every pointer or reference to mutable data is a potential data race.
 
-##### Note
+##### 비고
 
-You cannot have a race condition on immutable data.
+변경할 수 없는 데이터에 대해서는 경합 조건이 생기지 않는다.
 
-**References**: See the [rules for calling functions](#SS-call).
+**참고 항목**: [함수 호출에 대한 규칙](#SS-call)을 보라.
 
-##### Enforcement
+##### 적용
 
-(Simple) Report all non-`const` variables declared at namespace scope.
+(간단함) 네임스페이스 스코프 내에 정의된 `const`가 아닌 변수에 대해서 모두 보고하라.
 
-### <a name="Ri-singleton"></a>I.3: Avoid singletons
+### <a name="Ri-singleton"></a>I.3: 싱글톤을 피하라
 
-##### Reason
+##### 이유
 
-Singletons are basically complicated global objects in disguise.
+싱글톤은 기본적으로 복잡한 전역 개체이다.
 
-##### Example
+##### 예제
 
     class Singleton {
         // ... lots of stuff to ensure that only one Singleton object is created,
         // that it is initialized properly, etc.
     };
 
-There are many variants of the singleton idea.
-That's part of the problem.
+싱글톤 아이디어에는 많은 변형이 있다.
+그것이 문제의 일부다.
 
-##### Note
+##### 비고
 
-If you don't want a global object to change, declare it `const` or `constexpr`.
+전역 개체가 변경되지 않게 하려면, `const`나 `constexpr`로 선언하라.
 
-##### Exception
+##### 예외
 
-You can use the simplest "singleton" (so simple that it is often not considered a singleton) to get initialization on first use, if any:
+제일 단순한 "싱글톤"(처음에는 싱글톤으로 간주하지 않으므로 간단함)을 사용해 처음 사용시 초기화를 할 수 있다.
 
     X& myX()
     {
@@ -1170,51 +1190,68 @@ You can use the simplest "singleton" (so simple that it is often not considered 
         return my_x;
     }
 
-This is one of the most effective solutions to problems related to initialization order.
-In a multi-threaded environment the initialization of the static object does not introduce a race condition
-(unless you carelessly access a shared object from within its constructor).
+이 방식은 초기화 순서와 관련된 문제에 대해 가장 효과적인 해결책 중 하나다.
+다중 스레드 환경에서 정적 개체의 초기화는 경합 조건을 유발하지 않는다.
+(단, 생성자 내에서 공유 개체에 부주의하게 접근하지 않아야 한다.)
 
-If you, as many do, define a singleton as a class for which only one object is created, functions like `myX` are not singletons, and this useful technique is not an exception to the no-singleton rule.
+Note that the initialization of a local `static` does not imply a race condition.
+However, if the destruction of `X` involves an operation that needs to be synchronized we must use a less simple solution.
+For example:
 
-##### Enforcement
+    X& myX()
+    {
+        static auto p = new X {3};
+        return *p;  // potential leak
+    }
 
-Very hard in general.
+Now someone has to `delete` that object in some suitably thread-safe way.
+That's error-prone, so we don't use that technique unless
 
-* Look for classes with names that include `singleton`.
-* Look for classes for which only a single object is created (by counting objects or by examining constructors).
+* `myX` is in multithreaded code,
+* that `X` object needs to be destroyed (e.g., because it releases a resource), and
+* `X`'s destructor's code needs to be synchronized.
+
+하나의 개체만 생성해야 하는 클래스로 싱글톤을 정의한다면 `myX`와 같은 함수는 싱글톤이 아니다. 그리고 이 유용한 테크닉은 싱글톤이 아닌 규칙에 대한 예외는 아니다.
+
+##### 적용
+
+일반적으로 매우 힘들다.
+
+* `singleton`을 포함하는 이름을 가진 클래스를 찾아라.
+* 개체를 세거나 생성자를 검사해 단일 개체만 만들어진 클래스를 찾아라.
 * If a class X has a public static function that contains a function-local static of the class' type X and returns a pointer or reference to it, ban that.
 
-### <a name="Ri-typed"></a>I.4: Make interfaces precisely and strongly typed
+### <a name="Ri-typed"></a>I.4: 인터페이스를 정확하게, 강타입으로 만들어라
 
-##### Reason
+##### 이유
 
-Types are the simplest and best documentation, have well-defined meaning, and are guaranteed to be checked at compile time.
-Also, precisely typed code is often optimized better.
+타입은 가장 단순하지만 최고의 문서이기도 하다. 잘 정의된 의미를 갖고 있고, 컴파일 타임 검사가 보장된다.
+또한 정확하게 입력된 코드는 더 잘 최적화된다.
 
-##### Example, don't
+##### 하지 말아야 할 예제
 
-Consider:
+다음을 고려해 보자:
 
     void pass(void* data);    // void* is suspicious
 
-Now the callee has to cast the data pointer (back) to a correct type to use it. That is error-prone and often verbose.
-Avoid `void*`, especially in interfaces.
-Consider using a `variant` or a pointer to base instead.
+이제 피호출자에서 올바른 타입으로 사용하기 위해 `data` 포인터를 캐스팅해야 한다. 하지만 오류가 발생하기 쉽고, 구질구질하다.
+특히 인터페이스에서 `void*`를 피하라.
+대신 베이스 클래스를 가리키는 포인터나 `variant` 사용을 고려하라.
 
-**Alternative**: Often, a template parameter can eliminate the `void*` turning it into a `T*` or `T&`.
+**대안**: 때때로 템플릿 매개 변수는 `void*`를 제거하고 `T*`나 `T&`로 변환할 수 있다.
 For generic code these `T`s can be general or concept constrained template parameters.
 
-##### Example, bad
+##### 나쁜 예제
 
-Consider:
+다음을 고려해 보자:
 
     void draw_rect(int, int, int, int);   // great opportunities for mistakes
 
     draw_rect(p.x, p.y, 10, 20);          // what does 10, 20 mean?
 
-An `int` can carry arbitrary forms of information, so we must guess about the meaning of the four `int`s.
-Most likely, the first two are an `x`,`y` coordinate pair, but what are the last two?
-Comments and parameter names can help, but we could be explicit:
+`int`는 임의 형태의 정보를 전달할 수 있어서, 네 `int`가 각각 어떤 의미를 갖는지를 유추해야 한다.
+아마도 처음 두 `int`는 `x`, `y` 좌표일 것 같지만, 나머지 두 `int`는 무엇을 의미할까?
+주석이나 매개 변수 이름이 도움을 줄 수 있다. 보다 명확히 한다면, 다음과 같다.
 
     void draw_rectangle(Point top_left, Point bottom_right);
     void draw_rectangle(Point top_left, Size height_width);
@@ -1222,12 +1259,12 @@ Comments and parameter names can help, but we could be explicit:
     draw_rectangle(p, Point{10, 20});  // two corners
     draw_rectangle(p, Size{10, 20});   // one corner and a (height, width) pair
 
-Obviously, we cannot catch all errors through the static type system
-(e.g., the fact that a first argument is supposed to be a top-left point is left to convention (naming and comments)).
+분명히 정적 타입 시스템을 통해 모든 오류를 잡아낼 수는 없다.
+(예를 들어, 첫번째 인자가 왼쪽 상단에 있는 점이라는 사실은 이름이나 주석 등을 통해 편의상 정해져 있을 뿐이다.)
 
-##### Example, bad
+##### 나쁜 예제
 
-In the following example, it is not clear from the interface what `time_to_blink` means: Seconds? Milliseconds?
+다음 예제에서 인터페이스만 보고는 `time_to_blink`이 무엇을 의미하는지 잘 모르겠다. 초를 의미할까? 밀리초를 의미할까?
 
     void blink_led(int time_to_blink) // bad -- the unit is ambiguous
     {
@@ -1241,9 +1278,9 @@ In the following example, it is not clear from the interface what `time_to_blink
         blink_led(2);
     }
 
-##### Example, good
+##### 좋은 예제
 
-`std::chrono::duration` types (C++11) helps making the unit of time duration explicit.
+C++11에 도입된 `std::chrono::duration` 타입은 지속 시간의 단위를 명시적으로 표현하는데 도움이 된다.
 
     void blink_led(milliseconds time_to_blink) // good -- the unit is explicit
     {
@@ -1257,7 +1294,7 @@ In the following example, it is not clear from the interface what `time_to_blink
         blink_led(1500ms);
     }
 
-The function can also be written in such a way that it will accept any time duration unit.
+어떤 종류의 지속 시간의 단위도 허용하도록 함수를 다음과 같이 작성할 수도 있다.
 
     template<class rep, class period>
     void blink_led(duration<rep, period> time_to_blink) // good -- accepts any unit
@@ -1275,59 +1312,59 @@ The function can also be written in such a way that it will accept any time dura
         blink_led(1500ms);
     }
 
-##### Enforcement
+##### 적용
 
-* (Simple) Report the use of `void*` as a parameter or return type.
-* (Hard to do well) Look for member functions with many built-in type arguments.
+* (간단함) `void*`를 매개 변수나 리턴 타입으로 사용한다면 보고하라.
+* (잘하기 어려움) 다수의 내장 타입 인자를 갖는 멤버 함수를 찾아라.
 
-### <a name="Ri-pre"></a>I.5: State preconditions (if any)
+### <a name="Ri-pre"></a>I.5: (있다면) 사전 조건을 기술하라
 
-##### Reason
+##### 이유
 
-Arguments have meaning that may constrain their proper use in the callee.
+인자는 피호출자에서 적절한 사용을 제한할 수 있는 의미를 갖는다.
 
-##### Example
+##### 예제
 
-Consider:
+다음을 고려해 보자:
 
     double sqrt(double x);
 
-Here `x` must be nonnegative. The type system cannot (easily and naturally) express that, so we must use other means. For example:
+여기서 `x`는 반드시 음수가 아니어야 한다. 타입 시스템으로는 이를 (있는 그대로 쉽게) 표현할 수 없고, 그래서 다른 수단을 사용해야 한다. 예를 들어,
 
     double sqrt(double x); // x must be nonnegative
 
-Some preconditions can be expressed as assertions. For example:
+일부 사전 조건은 단정문으로 표현하기도 한다. 예를 들어,
 
     double sqrt(double x) { Expects(x >= 0); /* ... */ }
 
-Ideally, that `Expects(x >= 0)` should be part of the interface of `sqrt()` but that's not easily done. For now, we place it in the definition (function body).
+이상적으로 `Expects(x >= 0)` 조건이 `sqrt()`의 인터페이스에 일부분이 되는게 가장 좋지만 그렇게 하기는 쉽지 않다. 따라서 지금은 함수 정의부(함수 본문)에 위치시킨다.
 
-**References**: `Expects()` is described in [GSL](#S-gsl).
+**참고 항목**: `Expects()`는 [GSL](#S-gsl)에 기술되어 있다.
 
-##### Note
+##### 비고
 
-Prefer a formal specification of requirements, such as `Expects(p != nullptr);`.
-If that is infeasible, use English text in comments, such as `// the sequence [p:q) is ordered using <`.
+`Excepts(p != nullptr);`처럼 요구 사항의 공식적인 명세를 선호하라.
+불가능하다면, `// the sequence [p:q) is ordered using <`와 같이 영문 텍스트 주석을 사용하라.
 
-##### Note
+##### 비고
 
-Most member functions have as a precondition that some class invariant holds.
-That invariant is established by a constructor and must be reestablished upon exit by every member function called from outside the class.
-We don't need to mention it for each member function.
+대부분의 멤버 함수는 클래스의 불변 조건 중 일부에 해당하는 선행 조건을 갖고 있다.
+해당 불변 조건은 생성자에서 구성되는데 클래스 외부로부터 호출되는 모든 멤버 함수를 통해 재구성되어야 한다.
+그래서 각 함수마다 언급할 필요는 없다.
 
-##### Enforcement
+##### 적용
 
-(Not enforceable)
+(적용 불가능)
 
-**See also**: The rules for passing pointers. ???
+**참고 항목**: 포인터 전달에 대한 규칙. ???
 
-### <a name="Ri-expects"></a>I.6: Prefer `Expects()` for expressing preconditions
+### <a name="Ri-expects"></a>I.6: 사전 조건을 표현하고 싶다면 `Expects()`를 사용하라
 
-##### Reason
+##### 이유
 
-To make it clear that the condition is a precondition and to enable tool use.
+사전 조건임을 명확하게 표시하고 툴 사용을 쉽게 만들기 위해서다.
 
-##### Example
+##### 예제
 
     int area(int height, int width)
     {
@@ -1336,41 +1373,42 @@ To make it clear that the condition is a precondition and to enable tool use.
         // ...
     }
 
-##### Note
+##### 비고
 
-Preconditions can be stated in many ways, including comments, `if`-statements, and `assert()`.
-This can make them hard to distinguish from ordinary code, hard to update, hard to manipulate by tools, and may have the wrong semantics (do you always want to abort in debug mode and check nothing in productions runs?).
+사전 조건은 `if`문, `assert()`문, 주석문 등으로 기술할 수 있다.
+하지만 이런 구문은 일반 코드와 구분, 갱신하거나 툴로 조작하기 어렵고 잘못된 의미를 가질 수도 있다. (디버그 모드일 때는 중단시키고, 릴리즈 모드일때는 검사하고 싶은가?)
 
-##### Note
+##### 비고
 
-Preconditions should be part of the interface rather than part of the implementation,
-but we don't yet have the language facilities to do that.
+사전 조건은 구현 부분보다는 인터페이스 부분에 포함시켜야 한다. 하지만 아직은 그렇게 할 수 있는 언어 기능이 없다.
 Once language support becomes available (e.g., see the [contract proposal](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0380r1.pdf)) we will adopt the standard version of preconditions, postconditions, and assertions.
 
-##### Note
+##### 비고
 
-`Expects()` can also be used to check a condition in the middle of an algorithm.
+`Expects()`은 알고리즘 중간에 조건을 검사하는데 사용할 수도 있다.
 
-##### Enforcement
+##### 적용
 
-(Not enforceable) Finding the variety of ways preconditions can be asserted is not feasible. Warning about those that can be easily identified (`assert()`) has questionable value in the absence of a language facility.
+(적용 불가능) 사전 조건이 단정될 수 있는 다양한 방법을 찾는 것은 실현 가능하지 않다. 쉽게 식별할 수 있는 것들에 대해 경고(`assert()`)를 할 수 있는 언어 기능이 없다면 의심의 여지가 생길 수 밖에 없다.
 
-### <a name="Ri-post"></a>I.7: State postconditions
+### <a name="Ri-post"></a>I.7: 사후 조건을 기술하라
 
-##### Reason
+##### 이유
 
+결과에 대해 잘못 이해하고 있는 부분과 잘못된 구현을 찾아내기 위해서다.
 To detect misunderstandings about the result and possibly catch erroneous implementations.
 
-##### Example, bad
+##### 나쁜 예제
 
-Consider:
+다음을 고려해 보자:
 
     int area(int height, int width) { return height * width; }  // bad
 
-Here, we (incautiously) left out the precondition specification, so it is not explicit that height and width must be positive.
-We also left out the postcondition specification, so it is not obvious that the algorithm (`height * width`) is wrong for areas larger than the largest integer.
-Overflow can happen.
-Consider using:
+여기서 부주의하게 높이와 폭이 양수여야 한다는 사전 조건 명세를 빠뜨렸다.
+역시 넓이를 구하는 알고리즘(`hieght * width`)이 정수의 최댓값보다 클 수 있다는 사후 조건 명세를 빠뜨렸다.
+오버플로우가 발생할 수 있다.
+
+다음 사용을 고려해 보자:
 
     int area(int height, int width)
     {
@@ -1379,9 +1417,9 @@ Consider using:
         return res;
     }
 
-##### Example, bad
+##### 나쁜 예제
 
-Consider a famous security bug:
+악명 높은 보안 버그를 고려해 보자:
 
     void f()    // problematic
     {
@@ -1390,7 +1428,7 @@ Consider a famous security bug:
         memset(buffer, 0, MAX);
     }
 
-There was no postcondition stating that the buffer should be cleared and the optimizer eliminated the apparently redundant `memset()` call:
+버퍼가 초기화되어야 하고 최적화하면서 중복되는 `memset()`의 호출을 제거했음을 설명하는 사후 조건이 없다.
 
     void f()    // better
     {
@@ -1400,17 +1438,17 @@ There was no postcondition stating that the buffer should be cleared and the opt
         Ensures(buffer[0] == 0);
     }
 
-##### Note
+##### 비고
 
-Postconditions are often informally stated in a comment that states the purpose of a function; `Ensures()` can be used to make this more systematic, visible, and checkable.
+사후 조건은 종종 함수의 목적을 기술하는 주석문에 비공식적으로 명시되어 있다. `Ensures()`를 사용함으로서 더 시스템적으로 검사하는 모습을 보여줄 수 있다.
 
-##### Note
+##### 비고
 
-Postconditions are especially important when they relate to something that is not directly reflected in a returned result, such as a state of a data structure used.
+사후 조건은 사용되는 자료 구조의 상태처럼 반환된 결과에 간접적으로 영향을 미치는 무언가에 연관되어 있을 때 특히 중요하다.
 
-##### Example
+##### 예제
 
-Consider a function that manipulates a `Record`, using a `mutex` to avoid race conditions:
+경합 조건을 피할 목적으로 `mutex`를 사용해 `Record`를 조작하는 함수를 고려해 보자:
 
     mutex m;
 
@@ -1420,8 +1458,8 @@ Consider a function that manipulates a `Record`, using a `mutex` to avoid race c
         // ... no m.unlock() ...
     }
 
-Here, we "forgot" to state that the `mutex` should be released, so we don't know if the failure to ensure release of the `mutex` was a bug or a feature.
-Stating the postcondition would have made it clear:
+여기서 `mutex`를 해제해야 한다는 언급을 "잊어"버렸는데, `mutex` 해제를 언급하지 않은 것이 단순히 버그인지 의도한 것인지 알 수가 없다.
+사후 조건을 기술함으로서 언급을 명확하게 할 수 있다.
 
     void manipulate(Record& r)    // postcondition: m is unlocked upon exit
     {
@@ -1429,9 +1467,9 @@ Stating the postcondition would have made it clear:
         // ... no m.unlock() ...
     }
 
-The bug is now obvious (but only to a human reading comments)
+이제 버그가 분명하게 보인다. (단, 주석을 읽는 사람에게만 보인다.)
 
-Better still, use [RAII](#Rr-raii) to ensure that the postcondition ("the lock must be released") is enforced in code:
+더 나은 방법은 [RAII](#Rc-raii)를 사용해 사후 조건("락을 해제해야 함")이 코드에 적용되도록 하는 것이다.
 
     void manipulate(Record& r)    // best
     {
@@ -1439,25 +1477,25 @@ Better still, use [RAII](#Rr-raii) to ensure that the postcondition ("the lock m
         // ...
     }
 
-##### Note
+##### 비고
 
-Ideally, postconditions are stated in the interface/declaration so that users can easily see them.
-Only postconditions related to the users can be stated in the interface.
-Postconditions related only to internal state belongs in the definition/implementation.
+이상적으로, 사후 조건은 사용자들이 쉽게 볼 수 있도록 인터페이스/선언부에 기술해야 한다.
+사용자들에게 언급되어야 하는 사후 조건만 인터페이스에 기술해야 한다.
+내부 상태에 대한 사후 조건은 정의/구현부에만 기술한다.
 
-##### Enforcement
+##### 적용
 
-(Not enforceable) This is a philosophical guideline that is infeasible to check
+(적용 불가능) This is a philosophical guideline that is infeasible to check
 directly in the general case. Domain specific checkers (like lock-holding
 checkers) exist for many toolchains.
 
-### <a name="Ri-ensures"></a>I.8: Prefer `Ensures()` for expressing postconditions
+### <a name="Ri-ensures"></a>I.8: 사후 조건을 표현하고 싶다면 `Ensures()`를 사용하라
 
-##### Reason
+##### 이유
 
-To make it clear that the condition is a postcondition and to enable tool use.
+사후 조건이라는 것을 분명히 하기 위해, 또 분석 툴을 사용하기 위해서다.
 
-##### Example
+##### 예제
 
     void f()
     {
@@ -1467,32 +1505,32 @@ To make it clear that the condition is a postcondition and to enable tool use.
         Ensures(buffer[0] == 0);
     }
 
-##### Note
+##### 비고
 
-Postconditions can be stated in many ways, including comments, `if`-statements, and `assert()`.
-This can make them hard to distinguish from ordinary code, hard to update, hard to manipulate by tools, and may have the wrong semantics.
+사후 조건은 주석문, `if`문, `assert()`문 등 다양한 방식으로 기술할 수 있다.
+이는 일반적인 코드와 구분을 어렵게 만들고, 갱신하기 어렵게 만들고, 툴로 조작하기 어렵게 만들며 틀린 의미를 가질 수도 있다.
 
-**Alternative**: Postconditions of the form "this resource must be released" are best expressed by [RAII](#Rr-raii).
+**대안**: "이 리소스는 반드시 해제되어야 한다" 형태의 사후 조건은 [RAII](#Rc-raii)를 통해 가장 잘 나타낼 수 있다.
 
-##### Note
+##### 비고
 
-Ideally, that `Ensures` should be part of the interface, but that's not easily done.
-For now, we place it in the definition (function body).
+이상적으로 `Ensures`는 인터페이스의 일부가 되어야 하지만, 쉽게 할 수 있는 작업이 아니다.
+현재로서는 정의 부분(함수 본문)에 위치시킨다.
 Once language support becomes available (e.g., see the [contract proposal](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0380r1.pdf)) we will adopt the standard version of preconditions, postconditions, and assertions.
 
-##### Enforcement
+##### 적용
 
-(Not enforceable) Finding the variety of ways postconditions can be asserted is not feasible. Warning about those that can be easily identified (`assert()`) has questionable value in the absence of a language facility.
+(적용 불가능) 사후 조건을 단정할 수 있는 다양한 방식을 찾는 것은 실현 가능하지 않다. 언어 명세에 쉽게 확인할 수 있는 경고(`assert()`)문이 없다면 의문의 여지가 생길 수 밖에 없다.uage facility.
 
-### <a name="Ri-concepts"></a>I.9: If an interface is a template, document its parameters using concepts
+### <a name="Ri-concepts"></a>I.9: 인터페이스가 템플릿이라면 컨셉(Concept)을 사용해서 매개 변수를 문서화하라
 
-##### Reason
+##### 이유
 
-Make the interface precisely specified and compile-time checkable in the (not so distant) future.
+인터페이스를 정확하게, 그리고 (멀지 않은) 미래에 컴파일 타임 검사를 할 수 있게 만들어라.
 
-##### Example
+##### 예제
 
-Use the ISO Concepts TS style of requirements specification. For example:
+요구 사항 명세의 ISO 컨셉 TS 스타일을 사용하라. 예를 들어,
 
     template<typename Iter, typename Val>
     // requires InputIterator<Iter> && EqualityComparable<ValueType<Iter>>, Val>
@@ -1501,25 +1539,25 @@ Use the ISO Concepts TS style of requirements specification. For example:
         // ...
     }
 
-##### Note
+##### 비고
 
-Soon (maybe in 2017), most compilers will be able to check `requires` clauses once the `//` is removed.
-For now, the concept TS is supported only in GCC 6.1.
+곧 (아마도 2017년), `//`가 제거되면 대부분의 컴파일러가 `requires` 구문을 검사할 수 있을 것이다.
+현재 컨셉 TS는 GCC 6.1에서만 지원된다.
 
-**See also**: See [generic programming](#SS-GP) and [concepts](#SS-t-concepts).
+**참고 항목**: [제너릭 프로그래밍](#SS-GP)과 [컨셉](#SS-t-concepts)을 보라.
 
-##### Enforcement
+##### 적용
 
-(Not yet enforceable) A language facility is under specification. When the language facility is available, warn if any non-variadic template parameter is not constrained by a concept (in its declaration or mentioned in a `requires` clause).
+(아직 적용 불가능) 언어 명세를 작성중이다. 언어 명세가 정의된 후, 비가변 템플릿 매개 변수가 (선언이나 `requires`문에 언급되지 않은) 컨셉으로 제한되지 않는다면 경고하라.
 
-### <a name="Ri-except"></a>I.10: Use exceptions to signal a failure to perform a required task
+### <a name="Ri-except"></a>I.10: 요구된 작업의 수행 실패를 알리기 위해 예외를 사용하라
 
-##### Reason
+##### 이유
 
-It should not be possible to ignore an error because that could leave the system or a computation in an undefined (or unexpected) state.
-This is a major source of errors.
+시스템이나 계산 결과를 정의되지 않은(예측 불가능한) 상태로 둘 수 없으므로 오류를 무시해서는 안된다.
+이는 오류의 주 발생지가 된다.
 
-##### Example
+##### 예제
 
     int printf(const char* ...);    // bad: return negative number if output fails
 
@@ -1527,19 +1565,23 @@ This is a major source of errors.
     // good: throw system_error if unable to start the new thread
     explicit thread(F&& f, Args&&... args);
 
-##### Note: What is an error?
+##### 비고
 
-An error means that the function cannot achieve its advertised purpose (including establishing postconditions).
-Calling code that ignores the error could lead to wrong results or undefined systems state.
-For example, not being able to connect to a remote server is not by itself an error:
-the server can refuse a connection for all kinds of reasons, so the natural thing is to return a result that the caller always has to check.
-However, if failing to make a connection is considered an error, then a failure should throw an exception.
+오류란 무엇인가?
 
-**Exception**: Many traditional interface functions (e.g., UNIX signal handlers) use error codes (e.g., `errno`) to report what are really status codes, rather than errors. You don't have a good alternative to using such, so calling these does not violate the rule.
+오류란 함수가 (사후 조건 설정을 포함해) 의도한 목적을 이룰 수 없는 것을 의미한다.
+오류를 무시하는 코드를 호출하면 정의되지 않은 시스템 상태나 잘못된 결과를 야기할 수 있다.
+예를 들어, 리모트 서버에 연결할 수 없는 경우 자체적으로 오류가 발생하지 않는다.
+서버는 다양한 이유로 연결을 거부할 수 있다. 따라서 호출하는 쪽에서 결과를 확인할 수 있도록 반환해 주는 것이 자연스럽다.
+그러나 연결에 실패하는 것을 오류로 간주할 생각이라면, 실패할 경우 예외를 던져야 한다.
 
-##### Alternative
+##### 예외
 
-If you can't use exceptions (e.g. because your code is full of old-style raw-pointer use or because there are hard-real-time constraints), consider using a style that returns a pair of values:
+기존의 많은 인터페이스 함수들은 오류가 아닌 실제 상태 코드를 보고하기 위해 오류 코드(예를 들어, `errno`)를 사용한다. 이에 대해 별다른 대안이 없으므로 규칙을 위반하지는 않는다.
+
+##### 대안
+
+만약 (예를 들어, 여러분의 코드가 예전 스타일의 처리되지 않은 포인터로 가득하거나 실시간 제약이 심각하기 때문에) 예외를 사용할 수 없다면, 한 쌍의 값을 반환하는 스타일을 사용하는 것을 고려해 보라.
 
     int val;
     int error_code;
@@ -1559,32 +1601,32 @@ A facility [structured bindings](http://www.open-std.org/jtc1/sc22/wg21/docs/pap
     // ... use val ...
 
 
-##### Note
+##### 비고
 
-We don't consider "performance" a valid reason not to use exceptions.
+"성능"이 예외를 사용하지 않아야 하는 타당한 이유라고는 생각하지 않는다.
 
-* Often, explicit error checking and handling consume as much time and space as exception handling.
-* Often, cleaner code yields better performance with exceptions (simplifying the tracing of paths through the program and their optimization).
-* A good rule for performance critical code is to move checking outside the critical part of the code ([checking](#Rper-checking)).
-* In the longer term, more regular code gets better optimized.
+* 명시적인 오류 검사 및 처리는 종종 예외 처리만큼 많은 시간과 공간을 쓰기도 한다.
+* 간결한 코드는 종종 예외 처리를 포함하더라도 더 좋은 성능을 갖는다. (프로그램과 최적화를 통해 실행 경로를 단순화한다.)
+* 성능이 중요한 코드의 좋은 규칙은 오류 검사를 코드의 핵심 부분 바깥으로 옮기는 것이다 ([검사](#Rper-checking)).
+* 장기적으로 보면 정규 코드가 더 잘 최적화된다.
 * Always carefully [measure](#Rper-measure) before making performance claims.
 
-**See also**: [I.5](#Ri-pre) and [I.7](#Ri-post) for reporting precondition and postcondition violations.
+**참고 항목**: 사전 조건, 사후 조건의 위반 보고를 위한 [I.5](#Ri-pre) 및 [I.7](#Ri-post).
 
-##### Enforcement
+##### 적용
 
-* (Not enforceable) This is a philosophical guideline that is infeasible to check directly.
-* Look for `errno`.
+* (적용 불가능) 철저한 점검이 불가능한 철학적 가이드라인이다.
+* `errno`를 살펴 봐라.
 
-### <a name="Ri-raw"></a>I.11: Never transfer ownership by a raw pointer (`T*`)
+### <a name="Ri-raw"></a>I.11: 처리되지 않은 포인터(`T*`)로 소유권을 넘기지 마라
 
-##### Reason
+##### 이유
 
-If there is any doubt whether the caller or the callee owns an object, leaks or premature destruction will occur.
+호출하는 쪽이나 받는 쪽 중 누가 개체를 소유할 것인지 모른다면, 메모리 누수나 조기 파괴가 발생할 것이다.
 
-##### Example
+##### 예제
 
-Consider:
+다음을 고려해 보자:
 
     X* compute(args)    // don't
     {
@@ -1593,8 +1635,8 @@ Consider:
         return res;
     }
 
-Who deletes the returned `X`? The problem would be harder to spot if compute returned a reference.
-Consider returning the result by value (use move semantics if the result is large):
+반환된 `X`를 누가 삭제할 것인가? 만약 레퍼런스를 반환한다면 문제는 더 어려워질 것이다.
+결과가 값으로 반환되었다고 고려해 보자 (결과로 반환되는 값의 크기가 크다면 이동 문법을 사용하라).
 
     vector<double> compute(args)  // good
     {
@@ -1603,11 +1645,11 @@ Consider returning the result by value (use move semantics if the result is larg
         return res;
     }
 
-**Alternative**: Pass ownership using a "smart pointer", such as `unique_ptr` (for exclusive ownership) and `shared_ptr` (for shared ownership).
-However that is less elegant and less efficient unless reference semantics are needed.
+**대안**: (독점적인 소유를 위한) `unique_ptr` 또는 (소유권 공유를 위한) `shared_ptr`와 같이 "스마트 포인터"를 사용해서 소유권을 넘겨라.
+그러나 레퍼런스 의미가 필요하지 않다면 덜 우아하고 덜 효율적일 것이다.
 
-**Alternative**: Sometimes older code can't be modified because of ABI compatibility requirements or lack of resources.
-In that case, mark owning pointers using `owner` from [guideline support library](#S-gsl):
+**대안**: ABI 호환성 요구 사항 또는 리소스 부족으로 인해 오래된 코드를 수정할 수 없는 경우가 있다.
+이 경우, [가이드라인 지원 라이브러리](#S-gsl)의 `owner`를 사용해 포인터의 소유권을 표시하라.
 
     owner<X*> compute(args)    // It is now clear that ownership is transferred
     {
@@ -1616,34 +1658,32 @@ In that case, mark owning pointers using `owner` from [guideline support library
         return res;
     }
 
-This tells analysis tools that `res` is an owner.
-That is, its value must be `delete`d or transferred to another owner, as is done here by the `return`.
+위의 코드는 분석 툴에게 `res`가 소유권자라고 알려준다.
+즉, 이 값은 `return`을 통해 행해진 것처럼 `delete`되거나 다른 소유권자에게 넘겨줘야 한다.
 
-`owner` is used similarly in the implementation of resource handles.
+`owner`는 리소스 핸들의 구현에서 비슷하게 사용된다.
 
-##### Note
+##### 비고
 
-Every object passed as a raw pointer (or iterator) is assumed to be owned by the
-caller, so that its lifetime is handled by the caller. Viewed another way:
-ownership transferring APIs are relatively rare compared to pointer-passing APIs,
-so the default is "no ownership transfer."
+처리되지 않은 포인터(또는 반복자)로 전달된 모든 개체는 호출자가 소유한 것으로 간주되므로 호출자가 수명을 처리한다.
+Viewed another way: ownership transferring APIs are relatively rare compared to pointer-passing APIs, so the default is "no ownership transfer."
 
-**See also**: [Argument passing](#Rf-conventional) and [value return](#Rf-T-return).
+**참고 항목**: [인수 전달](#Rf-conventional) 및 [값 반환](#Rf-T-return).
 
-##### Enforcement
+##### 적용
 
-* (Simple) Warn on `delete` of a raw pointer that is not an `owner`.
-* (Simple) Warn on failure to either `reset` or explicitly `delete` an `owner` pointer on every code path.
-* (Simple) Warn if the return value of `new` or a function call with return value of pointer type is assigned to a raw pointer.
+* (간단함) `owner`가 아닌 처리되지 않은 포인터의 `delete`에 대해 경고를 표시하라.
+* (간단함) 모든 코드 경로에서 `owner` 포인터를 `reset`하거나 명시적으로 `delete`를 실패하게 되면 경고를 표시하라.
+* (간단함) `new`의 반환 값이나 포인터 타입의 반환 값을 갖는 함수 호출이 처리되지 않은 포인터에 할당되면 경고를 표시하라.
 
-### <a name="Ri-nullptr"></a>I.12: Declare a pointer that must not be null as `not_null`
+### <a name="Ri-nullptr"></a>I.12: NULL이 될 수 없는 포인터는 `not_null`로 선언하라
 
-##### Reason
+##### 이유
 
-To help avoid dereferencing `nullptr` errors.
-To improve performance by avoiding redundant checks for `nullptr`.
+`nullptr` 역참조 오류를 피하기 위해서다.
+그리고 `nullptr`를 반복해서 검사하는 경우를 피해 성능을 향상시키기 위해서다.
 
-##### Example
+##### 예제
 
     int length(const char* p);            // it is not clear whether length(nullptr) is valid
 
@@ -1653,61 +1693,63 @@ To improve performance by avoiding redundant checks for `nullptr`.
 
     int length(const char* p);            // we must assume that p can be nullptr
 
-By stating the intent in source, implementers and tools can provide better diagnostics, such as finding some classes of errors through static analysis, and perform optimizations, such as removing branches and null tests.
+소스 코드에 의도를 명시함으로써, 컴파일러와 툴이 정적 분석을 통해 일부 오류 클래스를 찾아내는 등의 보다 나은 진단을 제공하고 분기 및 널(NULL) 검사를 제거하는 등의 최적화 작업을 수행할 수 있다.
 
-##### Note
+##### 비고
 
-`not_null` is defined in the [guideline support library](#S-gsl)
+`not_null`은 [가이드라인 지원 라이브러리](#S-gsl)에 정의되어 있다.
 
-##### Note
+##### 비고
 
-The assumption that the pointer to `char` pointed to a C-style string (a zero-terminated string of characters) was still implicit, and a potential source of confusion and errors. Use `zstring` in preference to `const char*`.
+`char`에 대한 포인터가 C-스타일 문자열(`\0`으로 끝나는 문자열)을 가리키고 있다는 가정은 여전히 암묵적이며 혼란과 오류를 발생시키는 원인이 될 수 있다. `const char*`보다는 `zstring`을 사용하라.
 
     // we can assume that p cannot be nullptr
     // we can assume that p points to a zero-terminated array of characters
     int length(not_null<zstring> p);
 
-Note: `length()` is, of course, `std::strlen()` in disguise.
+비고: 물론 `length()`는 `std::strlen()`이다.
 
-##### Enforcement
+##### 적용
 
-* (Simple) ((Foundation)) If a function checks a pointer parameter against `nullptr` before access, on all control-flow paths, then warn it should be declared `not_null`.
-* (Complex) If a function with pointer return value ensures it is not `nullptr` on all return paths, then warn the return type should be declared `not_null`.
+* (간단함) ((기초)) 함수가 모든 제어-흐름 경로에서 포인터 매개 변수에 접근하기 전에 `nullptr`인지 검사한다면, `not_null`으로 선언되어야 한다는 경고를 표시하라.
+* (복잡함) 포인터 반환 값을 갖는 함수가 모든 반환 경로에서 `nullptr`이 아닌지 확인한다면, 리턴 타입을 `not_null`으로 선언해야 된다는 경고를 표시하라.
 
-### <a name="Ri-array"></a>I.13: Do not pass an array as a single pointer
+### <a name="Ri-array"></a>I.13: 배열을 단일 포인터로 전달하지 마라
 
-##### Reason
+##### 이유
 
- (pointer, size)-style interfaces are error-prone. Also, a plain pointer (to array) must rely on some convention to allow the callee to determine the size.
+(포인터, 크기)-스타일 인터페이스는 오류가 발생하기 쉽다. 또한 (배열에 대한) 일반 포인터는 호출을 받는 곳에서 크기를 결정할 수 있도록 몇 가지 관례에 의존해야 한다.
 
-##### Example
+##### 예제
 
-Consider:
+다음을 고려해 보자:
 
     void copy_n(const T* p, T* q, int n); // copy from [p:p+n) to [q:q+n)
 
-What if there are fewer than `n` elements in the array pointed to by `q`? Then, we overwrite some probably unrelated memory.
-What if there are fewer than `n` elements in the array pointed to by `p`? Then, we read some probably unrelated memory.
-Either is undefined behavior and a potentially very nasty bug.
+만약 `q`가 가리키는 배열의 원소 갯수가 `n`보다 적다면 어떻게 될까? 관계없는 메모리를 덮어쓰게 된다.
+만약 `p`가 가리키는 배열의 원소 갯수가 `n`보다 적다면 어떻게 될까? 관계없는 메모리를 읽을 것이다.
+어느 쪽이나 정의되지 않은 동작을 수행하거나 매우 불쾌한 버그가 발생할 수 있다.
 
-##### Alternative
+##### 대안
 
-Consider using explicit spans:
+명시적인 범위 사용을 고려해 보라:
 
     void copy(span<const T> r, span<T> r2); // copy r to r2
 
-##### Example, bad
+##### 나쁜 예제
 
-Consider:
+다음을 고려해 보자:
 
     void draw(Shape* p, int n);  // poor interface; poor code
     Circle arr[10];
     // ...
     draw(arr, 10);
 
-Passing `10` as the `n` argument may be a mistake: the most common convention is to assume \[`0`:`n`) but that is nowhere stated. Worse is that the call of `draw()` compiled at all: there was an implicit conversion from array to pointer (array decay) and then another implicit conversion from `Circle` to `Shape`. There is no way that `draw()` can safely iterate through that array: it has no way of knowing the size of the elements.
+`n`의 인수로 `10`을 전달하는 것은 실수일 수 있다. 가장 일반적인 관례는 \[`0`:`n`)이라고 가정하는 것이지만, 이러한 내용이 어디에도 언급되어 있지 않다.
+더 나쁜 부분은 어쨌든 `draw()` 호출이 컴파일된다는 것이다. 배열에서 포인터로의 암시적 변환(배열 부패)이 있었고, `Circle`에서 `Shape`로의 또 다른 암시적 변환이 있었다.
+`draw()`가 그 배열을 통해 안전하게 반복문을 수행할 수 있는 방법은 없다. 왜냐하면 요소의 크기를 알 수 있는 방법이 없기 때문이다.
 
-**Alternative**: Use a support class that ensures that the number of elements is correct and prevents dangerous implicit conversions. For example:
+**대안**: 요소의 크기를 보장하고 위험한 암시적 변환을 방지하는 지원 클래스를 사용하라.
 
     void draw2(span<Circle>);
     Circle arr[10];
@@ -1718,15 +1760,17 @@ Passing `10` as the `n` argument may be a mistake: the most common convention is
     void draw3(span<Shape>);
     draw3(arr);    // error: cannot convert Circle[10] to span<Shape>
 
-This `draw2()` passes the same amount of information to `draw()`, but makes the fact that it is supposed to be a range of `Circle`s explicit. See ???.
+이 `draw2()`는 같은 양의 정보를 `draw()`에 전달하지만, 명시적으로 `Circle`이 되어야 한다는 사실을 알 수 있다. ???을 보라.
 
-**Exception**: Use `zstring` and `czstring` to represent a C-style, zero-terminated strings.
+##### 예외
+
+`zstring`과 `czstring`을 사용해 C-스타일의 `\0`로 끝나는 문자열을 나타내라.
 But when doing so, use `string_span` from the [GSL](#GSL) to prevent range errors.
 
-##### Enforcement
+##### 적용
 
-* (Simple) ((Bounds)) Warn for any expression that would rely on implicit conversion of an array type to a pointer type. Allow exception for zstring/czstring pointer types.
-* (Simple) ((Bounds)) Warn for any arithmetic operation on an expression of pointer type that results in a value of pointer type. Allow exception for zstring/czstring pointer types.
+* (간단함) ((경계)) 배열 타입에서 포인터 타입으로의 암시적 변환에 의존하는 표현식에 대해 경고를 표시하라. zstring/czstring 포인터 타입에 대해서는 예외를 허용한다.
+* (간단함) ((경계)) 포인터 타입의 값을 가져오는 포인터 타입의 표현식에 대한 산술 연산에 대해 경고를 표시하라. zstring/czstring 포인터 타입에 대해서는 예외를 허용한다.
 
 ### <a name="Ri-global-init"></a>I.22: Avoid complex initialization of global objects
 
@@ -1762,87 +1806,88 @@ It is usually best to avoid global (namespace scope) objects altogether.
 * Flag initializers of globals that call non-`constexpr` functions
 * Flag initializers of globals that access `extern` objects
 
-### <a name="Ri-nargs"></a>I.23: Keep the number of function arguments low
+### <a name="Ri-nargs"></a>I.23: 함수 인자 갯수를 최소로 유지하라
 
-##### Reason
+##### 이유
 
-Having many arguments opens opportunities for confusion. Passing lots of arguments is often costly compared to alternatives.
+인자 갯수가 많으면 혼란을 일으킬 수 있다.
+인자를 많이 전달하는 것은 제시할 대안에 비해 비용이 많이 든다.
 
-##### Example
+##### 예제
 
-The standard-library `merge()` is at the limit of what we can comfortably handle
+표준 라이브러리 `merge()`는 편하게 처리할 수 있는 한계에 있다.
 
     template<class InputIterator1, class InputIterator2, class OutputIterator, class Compare>
     OutputIterator merge(InputIterator1 first1, InputIterator1 last1,
                          InputIterator2 first2, InputIterator2 last2,
                          OutputIterator result, Compare comp);
 
-Here, we have four template arguments and six function arguments.
-To simplify the most frequent and simplest uses, the comparison argument can be defaulted to `<`:
+여기에 4개의 템플릿 인자와 6개의 함수 인자가 있다.
+단순화하기 위해 가장 빈번하게 사용하는 많이 쓰는 방식으로 비교 인수의 디폴트 값인 `<`을 사용해 보자.
 
     template<class InputIterator1, class InputIterator2, class OutputIterator>
     OutputIterator merge(InputIterator1 first1, InputIterator1 last1,
                          InputIterator2 first2, InputIterator2 last2,
                          OutputIterator result);
 
-This doesn't reduce the total complexity, but it reduces the surface complexity presented to many users.
-To really reduce the number of arguments, we need to bundle the arguments into higher-level abstractions:
+이렇게 한다고 해서 전체적인 복잡성이 줄어들지는 않지만 사용자 입장에서 볼 때는 복잡성이 줄어든 것처럼 보인다.
+실제로 인자 갯수를 줄이려면 인자를 좀 더 높은 수준의 추상화로 묶어야 한다.
 
     template<class InputRange1, class InputRange2, class OutputIterator>
     OutputIterator merge(InputRange1 r1, InputRange2 r2, OutputIterator result);
 
-Grouping arguments into "bundles" is a general technique to reduce the number of arguments and to increase the opportunities for checking.
+인자를 "묶어서" 그룹화하는 것은 인자의 갯수를 줄이고 검사할 기회를 늘리는 일반적인 기법이다.
 
 Alternatively, we could use concepts (as defined by the ISO TS) to define the notion of three types that must be usable for merging:
 
     Mergeable{In1 In2, Out}
     OutputIterator merge(In1 r1, In2 r2, Out result);
 
-##### Note
+##### 비고
 
-How many arguments are too many? Four arguments is a lot.
-There are functions that are best expressed with four individual arguments, but not many.
+얼마나 많은 인자가 있어야 너무 많다고 말할 수 있을까? 인자가 4개라면 많다고 말할 수 있다.
+4개의 인자로 가장 잘 표현할 수 있는 함수들도 있지만, 많지는 않다.
 
-**Alternative**: Group arguments into meaningful objects and pass the objects (by value or by reference).
+**대안**: 인자를 의미있는 개체로 그룹화하고 개체를 전달하라. (값에 의한 전달 또는 레퍼런스에 의한 전달)
 
-**Alternative**: Use default arguments or overloads to allow the most common forms of calls to be done with fewer arguments.
+**대안**: 더 적은 인자 갯수로 가장 일반적인 형태의 호출을 할 수 있는 디폴트 인자나 오버로드를 사용하라.
 
-##### Enforcement
+##### 적용
 
-* Warn when a functions declares two iterators (including pointers) of the same type instead of a range or a view.
-* (Not enforceable) This is a philosophical guideline that is infeasible to check directly.
+* 범위 또는 뷰가 아닌 동일한 타입의 반복자(포인터 포함)를 2개 이상 선언하는 함수가 있다면 경고를 표시하라.
+* (적용 불가능) 철저한 점검이 불가능한 철학적 가이드라인이다.
 
-### <a name="Ri-unrelated"></a>I.24: Avoid adjacent unrelated parameters of the same type
+### <a name="Ri-unrelated"></a>I.24: 관련없는 동일 타입의 인접한 매개 변수는 피하라
 
-##### Reason
+##### 이유
 
-Adjacent arguments of the same type are easily swapped by mistake.
+실수로 동일 타입의 인접한 인수를 쉽게 바꿀 수 있다.
 
-##### Example, bad
+##### 나쁜 예제
 
-Consider:
+다음을 고려해 보자:
 
     void copy_n(T* p, T* q, int n);  // copy from [p:p+n) to [q:q+n)
 
-This is a nasty variant of a K&R C-style interface. It is easy to reverse the "to" and "from" arguments.
+위 코드는 K&R C-스타일 인터페이스의 적절하지 못한 변형이다. "to"와 "from" 인수를 쉽게 바꿀 수 있다.
 
-Use `const` for the "from" argument:
+"from" 인자에 `const`를 사용하라.
 
     void copy_n(const T* p, T* q, int n);  // copy from [p:p+n) to [q:q+n)
 
-##### Exception
+##### 예외
 
 If the order of the parameters is not important, there is no problem:
 
     int max(int a, int b);
 
-##### Alternative
+##### 대안
 
-Don't pass arrays as pointers, pass an object representing a range (e.g., a `span`):
+배열을 포인터로 전달하지 말고 범위를 나타내는 개체(예를 들어, `span`)로 전달하라.
 
     void copy_n(span<const T> p, span<T> q);  // copy from p to q
 
-##### Alternative
+##### 대안
 
 Define a `struct` as the parameter type and name the fields for those parameters accordingly:
 
@@ -1856,19 +1901,19 @@ Define a `struct` as the parameter type and name the fields for those parameters
 This has a tendency to make invocations of this clear to future readers, as the parameters
 are often filled in by name at the call site.
 
-##### Enforcement
+##### 적용
 
-(Simple) Warn if two consecutive parameters share the same type.
+(간단함) 연속하는 두 매개 변수가 동일한 타입을 공유하는 경우 경고를 표시하라.
 
-### <a name="Ri-abstract"></a>I.25: Prefer abstract classes as interfaces to class hierarchies
+### <a name="Ri-abstract"></a>I.25: 인터페이스로 클래스 계층보다는 추상 클래스를 사용하라
 
-##### Reason
+##### 이유
 
-Abstract classes are more likely to be stable than base classes with state.
+추상 클래스는 상태가 있는 베이스 클래스보다 안정적이다.
 
-##### Example, bad
+##### 나쁜 예제
 
-You just knew that `Shape` would turn up somewhere :-)
+당신은 `Shape`가 어디선가 나타날 것이라고 믿고 있었을 것이다. :-)
 
     class Shape {  // bad: interface class loaded with data
     public:
@@ -1882,7 +1927,10 @@ You just knew that `Shape` would turn up somewhere :-)
         Color col;
     };
 
-This will force every derived class to compute a center -- even if that's non-trivial and the center is never used. Similarly, not every `Shape` has a `Color`, and many `Shape`s are best represented without an outline defined as a sequence of `Point`s. Abstract classes were invented to discourage users from writing such classes:
+이렇게 하면 파생된 모든 클래스가 중심을 계산하게 된다.
+비록 중요하지 않고 중심이 사용되지 않더라도 말이다.
+비슷하게, 모든 `Shape`가 `Color`를 갖고 있는 것은 아니며 많은 `Shape`들은 일련의 `Point`로 정의된 윤곽선없이 가장 잘 표현된다.
+추상 클래스는 사용자가 그러한 클래스를 작성하지 못하도록 만들기 위해 고안되었다.
 
     class Shape {    // better: Shape is a pure interface
     public:
@@ -1893,60 +1941,63 @@ This will force every derived class to compute a center -- even if that's non-tr
         // ... no data members ...
     };
 
-##### Enforcement
+##### 적용
 
-(Simple) Warn if a pointer to a class `C` is assigned to a pointer to a base of `C` and the base class contains data members.
+(간단함) `C` 클래스를 가리키는 포인터가 `C`의 베이스를 가리키는 포인터에 할당되고 베이스 클래스에 데이터 멤버가 있으면 경고를 표시하라.
 
-### <a name="Ri-abi"></a>I.26: If you want a cross-compiler ABI, use a C-style subset
+### <a name="Ri-abi"></a>I.26: 크로스 컴파일러 ABI를 원한다면 C 스타일 코드를 사용하라
 
-##### Reason
+##### 이유
 
-Different compilers implement different binary layouts for classes, exception handling, function names, and other implementation details.
+컴파일러마다 클래스, 예외 처리, 함수 이름 및 기타 구현 세부 사항에 대해 서로 다른 바이너리 레이아웃을 구현한다.
 
-**Exception**: You can carefully craft an interface using a few carefully selected higher-level C++ types. See ???.
+##### 예외
 
-**Exception**: Common ABIs are emerging on some platforms freeing you from the more draconian restrictions.
+신중하게 선택한 몇 가지 고급 수준의 C++ 타입을 사용해 인터페이스를 신중하게 만들 수 있다. ???을 보라.
 
-##### Note
+##### 예외
 
-If you use a single compiler, you can use full C++ in interfaces. That may require recompilation after an upgrade to a new compiler version.
+일반적인 ABI는 일부 플랫폼에서 점점 더 엄격한 제한으로부터 벗어나고 있다.
 
-##### Enforcement
+##### 비고
 
-(Not enforceable) It is difficult to reliably identify where an interface forms part of an ABI.
+단일 컴파일러를 사용하는 경우 인터페이스에서 C++ 전체를 사용할 수 있다. 새 컴파일러 버전으로 업그레이드 한 후에는 다시 컴파일해야 할 수 있다.
 
-# <a name="S-functions"></a>F: Functions
+##### 적용
 
-A function specifies an action or a computation that takes the system from one consistent state to the next. It is the fundamental building block of programs.
+(적용 불가능) 인터페이스가 ABI의 일부가 되는 부분을 확실하게 식별하기는 어렵다.
 
-It should be possible to name a function meaningfully, to specify the requirements of its argument, and clearly state the relationship between the arguments and the result. An implementation is not a specification. Try to think about what a function does as well as about how it does it.
-Functions are the most critical part in most interfaces, so see the interface rules.
+# <a name="S-functions"></a>F: 함수
 
-Function rule summary:
+함수는 어떤 동작이나 계산을 명세하는데, 하나의 상태에서 다른 상태로 일관성 있게 넘어가는 시스템이다. 함수는 프로그램의 기초적인 설계 단위다.
 
-Function definition rules:
+함수 이름은 인자의 요구사항, 인자간의 관계와 결과를 명확하게 기술할 수 있도록 의미있게 지어야 한다. 함수의 구현은 사양서가 아니다. 함수가 무엇을 해야하는지, 어떻게 동작하는지를 고려해야 한다. 함수는 모든 인터페이스에서 가장 중요한 부분이다. 인터페이스 규칙을 참고 하라.
 
-* [F.1: "Package" meaningful operations as carefully named functions](#Rf-package)
-* [F.2: A function should perform a single logical operation](#Rf-logical)
-* [F.3: Keep functions short and simple](#Rf-single)
-* [F.4: If a function may have to be evaluated at compile time, declare it `constexpr`](#Rf-constexpr)
-* [F.5: If a function is very small and time-critical, declare it inline](#Rf-inline)
-* [F.6: If your function may not throw, declare it `noexcept`](#Rf-noexcept)
-* [F.7: For general use, take `T*` or `T&` arguments rather than smart pointers](#Rf-smart)
-* [F.8: Prefer pure functions](#Rf-pure)
+함수 규칙 요약:
 
-Parameter passing expression rules:
+함수 정의 규칙:
 
-* [F.15: Prefer simple and conventional ways of passing information](#Rf-conventional)
-* [F.16: For "in" parameters, pass cheaply-copied types by value and others by reference to `const`](#Rf-in)
-* [F.17: For "in-out" parameters, pass by reference to non-`const`](#Rf-inout)
-* [F.18: For "consume" parameters, pass by `X&&` and `std::move` the parameter](#Rf-consume)
-* [F.19: For "forward" parameters, pass by `TP&&` and only `std::forward` the parameter](#Rf-forward)
-* [F.20: For "out" output values, prefer return values to output parameters](#Rf-out)
-* [F.21: To return multiple "out" values, prefer returning a tuple or struct](#Rf-out-multi)
-* [F.60: Prefer `T*` over `T&` when "no argument" is a valid option](#Rf-ptr-ref)
+* [F.1: 의미있는 동작들을 모아서 심사숙고해 함수 이름을 지어라](#Rf-package)
+* [F.2: 함수는 하나의 논리적 동작만 수행하도록 하라](#Rf-logical)
+* [F.3: 함수는 간결하고 단순하게 유지시켜라](#Rf-single)
+* [F.4: 함수가 컴파일 타임에 평가되어야 한다면 `constexpr`로 선언하라](#Rf-constexpr)
+* [F.5: 함수가 매우 짧고 수행시간이 중요하다면 inline으로 선언하라](#Rf-inline)
+* [F.6: 함수가 예외를 던지지 않는다면 `noexcept`로 선언하라](#Rf-noexcept)
+* [F.7: 보편성을 고려한다면, 스마트 포인터 대신에 `T*`나 `T&`형 인자를 사용하라](#Rf-smart)
+* [F.8: 순수 함수를 선호하라](#Rf-pure)
 
-Parameter passing semantic rules:
+매개 변수 전달 표현 규칙:
+
+* [F.15: 정보를 전달 할 때 단순하고 관습적인 방법을 선호하라](#Rf-conventional)
+* [F.16: "입력" 매개 변수는 복사 비용이 적게드는 값의 형을 사용하거나 상수 참조형으로 전달하라](#Rf-in)
+* [F.17: "입출력" 매개 변수는 비상수 참조형으로 전달하라](#Rf-inout)
+* [F.18: "소모성" 매개 변수는 `X&&`형과 `std::move`로 전달하라](#Rf-consume)
+* [F.19: "forward" 매개 변수는 `TP&&`형과 `std::forward`로만 전달하라](#Rf-forward)
+* [F.20: For "out" output values, 출력 매개 변수로 값을 반환하는 방법을 선호하라](#Rf-out)
+* [F.21: "출력"값 여러개를 반환할 때는 튜플이나 구조체를 선호하라](#Rf-out-multi)
+* [F.60: "인자가 없을 수도" 있다면 `T&`보다는 `T*`를 선호하라](#Rf-ptr-ref)
+
+매개 변수 의미론적 규칙:
 
 * [F.22: Use `T*` or `owner<T*>` or a smart pointer to designate a single object](#Rf-ptr)
 * [F.23: Use a `not_null<T>` to indicate "null" is not a valid value](#Rf-nullptr)
@@ -1955,7 +2006,7 @@ Parameter passing semantic rules:
 * [F.26: Use a `unique_ptr<T>` to transfer ownership where a pointer is needed](#Rf-unique_ptr)
 * [F.27: Use a `shared_ptr<T>` to share ownership](#Rf-shared_ptr)
 
-Value return semantic rules:
+값 반환 의미론적 규칙:
 
 * [F.42: Return a `T*` to indicate a position (only)](#Rf-return-ptr)
 * [F.43: Never (directly or indirectly) return a pointer or a reference to a local object](#Rf-dangle)
@@ -1964,7 +2015,7 @@ Value return semantic rules:
 * [F.46: `int` is the return type for `main()`](#Rf-main)
 * [F.47: Return `T&` from assignment operators.](#Rf-assignment-op)
 
-Other function rules:
+기타 함수 규칙:
 
 * [F.50: Use a lambda when a function won't do (to capture local variables, or to write a local function)](#Rf-capture-vs-overload)
 * [F.51: Where there is a choice, prefer default arguments over overloading](#Rf-default-args)
@@ -1972,20 +2023,20 @@ Other function rules:
 * [F.53: Avoid capturing by reference in lambdas that will be used nonlocally, including returned, stored on the heap, or passed to another thread](#Rf-value-capture)
 * [F.54: If you capture `this`, capture all variables explicitly (no default capture)](#Rf-this-capture)
 
-Functions have strong similarities to lambdas and function objects so see also Section ???.
+함수는 람다와 함수객체와 매우 유사하다. 그러니 ???을 참고하라.
 
-## <a name="SS-fct-def"></a>F.def: Function definitions
+## <a name="SS-fct-def"></a>F.def: 함수 정의
 
-A function definition is a function declaration that also specifies the function's implementation, the function body.
+함수 정의는 함수를 선언하고 몸체를 구현하는 것을 포함한다.
 
-### <a name="Rf-package"></a>F.1: "Package" meaningful operations as carefully named functions
+### <a name="Rf-package"></a>F.1: 의미있는 동작들을 모아서 심사숙고해 함수 이름을 지어라
 
-##### Reason
+##### 이유
 
-Factoring out common code makes code more readable, more likely to be reused, and limit errors from complex code.
-If something is a well-specified action, separate it out from its surrounding code and give it a name.
+공통 코드를 만드는 것은 가독성, 재사용성을 높이고 복잡한 코드에서 오류 발생을 제한시킨다.
+만약 어떤 동작이 잘 정의되어 있다면 주변 코드로부터 분리하고 이름을 지어라.
 
-##### Example, don't
+##### 나쁜 예제,
 
     void read_and_print(istream& is)    // read and print an int
     {
@@ -1996,48 +2047,48 @@ If something is a well-specified action, separate it out from its surrounding co
             cerr << "no int on input\n";
     }
 
-Almost everything is wrong with `read_and_print`.
-It reads, it writes (to a fixed `ostream`), it writes error messages (to a fixed `ostream`), it handles only `int`s.
-There is nothing to reuse, logically separate operations are intermingled and local variables are in scope after the end of their logical use.
-For a tiny example, this looks OK, but if the input operation, the output operation, and the error handling had been more complicated the tangled
-mess could become hard to understand.
+`read_and_print`는 대부분이 틀렸다.
+이 함수는 읽고, (`ostream`에) 쓰고, (`ostream`에) 오류 메시지를 쓴다. 그리고 `int`변수만을 다룬다.
+재사용되는 코드가 없고 논리적으로 분리된 동작들은 섞였고 지역변수는 사용이 끝난 후에도 존재한다.
+간단한 이 예제는 문제가 없어보이지만, 입력동작, 출력동작 그리고 오류처리가 좀 더 복잡해지면 코드가 뒤엉켜서 이해하기 어려워 진다.
 
-##### Note
+##### 비고
 
-If you write a non-trivial lambda that potentially can be used in more than one place, give it a name by assigning it to a (usually non-local) variable.
+만약 한 곳 이상에서 사용 될 중요한 람다 함수를 작성한다면 (비지역)변수에 할당하고 이름을 지어줘라.
 
-##### Example
+##### 예제
 
     sort(a, b, [](T x, T y) { return x.rank() < y.rank() && x.value() < y.value(); });
 
-Naming that lambda breaks up the expression into its logical parts and provides a strong hint to the meaning of the lambda.
+람다에 이름을 짓게되면 표현식을 여러개의 논리적 부분으로 나눌 수 있고, 람다가 어떤 일을 하는지 가늠할 수 있다.
 
     auto lessT = [](T x, T y) { return x.rank() < y.rank() && x.value() < y.value(); };
 
     sort(a, b, lessT);
     find_if(a, b, lessT);
 
-The shortest code is not always the best for performance or maintainability.
+유지보수나 성능을 고려하면 짧은 코드가 항상 좋은것은 아니다.
 
-**Exception**: Loop bodies, including lambdas used as loop bodies, rarely need to be named.
-However, large loop bodies (e.g., dozens of lines or dozens of pages) can be a problem.
-The rule [Keep functions short](#Rf-single) implies "Keep loop bodies short."
-Similarly, lambdas used as callback arguments are sometimes non-trivial, yet unlikely to be re-usable.
+##### 예외
 
-##### Enforcement
+반복문 몸체, 반복문 몸체로 사용되는 람다는 이름을 가질 필요가 거의 없다.
+하지만 수 십라인이 넘거나 수 페이지가 된다면 문제가 될 수 있다.
+[함수를 간결하게 유지하라](#Rf-single) 규칙은 "반복문을 간결하게 유지하라"는 규칙을 내포한다. 콜백 인자로 사용되는 람다는 재사용하지 않지만 사소하게 볼 수 없는 경우도 있다.
 
-* See [Keep functions short](#Rf-single)
-* Flag identical and very similar lambdas used in different places.
+##### 적용
 
-### <a name="Rf-logical"></a>F.2: A function should perform a single logical operation
+* [함수를 간결하게 유지하라](#Rf-single)를 참고하라.
+* 여러곳에서 사용되는 동일하거나 매우 비슷한 람다는 표시해 두어라.
 
-##### Reason
+### <a name="Rf-logical"></a>F.2: 함수는 논리적으로 한 가지 작업만 수행해야 한다
 
-A function that performs a single operation is simpler to understand, test, and reuse.
+##### 이유
 
-##### Example
+하나의 작업만 수행하는 함수는 이해하기 쉽고, 테스트하기 쉽고, 재사용하기 쉽다.
 
-Consider:
+##### 예제
+
+다음을 고려해 보자:
 
     void read_and_print()    // bad
     {
@@ -2047,7 +2098,7 @@ Consider:
         cout << x << "\n";
     }
 
-This is a monolith that is tied to a specific input and will never find a another (different) use. Instead, break functions up into suitable logical parts and parameterize:
+위 함수는 특정한 입력에 속박되어 있고 다른 쓰임새는 찾을 수 없다. 대신, 함수를 의미있는 논리적 작업으로 나누고 매개 변수화하라.
 
     int read(istream& is)    // better
     {
@@ -2062,7 +2113,7 @@ This is a monolith that is tied to a specific input and will never find a anothe
         os << x << "\n";
     }
 
-These can now be combined where needed:
+필요하다면 두 함수를 결합하면 된다:
 
     void read_and_print()
     {
@@ -2070,7 +2121,7 @@ These can now be combined where needed:
         print(cout, x);
     }
 
-If there was a need, we could further templatize `read()` and `print()` on the data type, the I/O mechanism, the response to errors, etc. Example:
+또한 필요하다면 `read()`와 `print()`에서 사용하는 데이터 타입, 입력 메커니즘, 오류에 대한 응답 등을 템플릿화 할 수 있다. 예를 들어:
 
     auto read = [](auto& input, auto& value)    // better
     {
@@ -2083,11 +2134,11 @@ If there was a need, we could further templatize `read()` and `print()` on the d
         output << value << "\n";
     }
 
-##### Enforcement
+##### 적용
 
-* Consider functions with more than one "out" parameter suspicious. Use return values instead, including `tuple` for multiple return values.
-* Consider "large" functions that don't fit on one editor screen suspicious. Consider factoring such a function into smaller well-named suboperations.
-* Consider functions with 7 or more parameters suspicious.
+* 출력 매개 변수가 2개 이상인 함수를 의심하라. 대신 반환값을 사용하라. 여러 반환값을 저장 할 수 있는 `tuple`을 사용해도 좋다. 
+* 편집기 화면에 다 나오지 않을 만큼 큰 함수를 의심하라. 이런 함수는 세부 동작을 갖는 더 작은 함수들로 (이름을 잘 지어서) 나누도록 한다.
+* 7개 이상의 매개 변수를 갖는 함수를 의심하라.
 
 ### <a name="Rf-single"></a>F.3: Keep functions short and simple
 
@@ -2192,7 +2243,8 @@ The (in)famous factorial:
         return x;
     }
 
-This is C++14. For C++11, use a recursive formulation of `fac()`.
+This is C++14.
+For C++11, use a recursive formulation of `fac()`.
 
 ##### Note
 
@@ -2221,6 +2273,12 @@ it just guarantees that the function can be evaluated at compile time for consta
     }
 
 This is usually a very good thing.
+
+When given a non-constant argument, a `constexpr` function can throw.
+If you consider exiting by throwing a side-effect, a `constexpr` function isn't completely pure;
+if not, this is not an issue.
+??? A question for the committee: can a constructor for an exception thrown by a `constexpr` function modify state?
+"No" would be a nice answer that matches most practice.
 
 ##### Note
 
@@ -2252,7 +2310,9 @@ Specifying `inline` encourages the compiler to do a better job.
 
     inline string cat(const string& s, const string& s2) { return s + s2; }
 
-**Exception**: Do not put an `inline` function in what is meant to be a stable interface unless you are really sure that it will not change.
+##### Exception
+
+Do not put an `inline` function in what is meant to be a stable interface unless you are really sure that it will not change.
 An inline function is part of the ABI.
 
 ##### Note
@@ -2263,7 +2323,9 @@ An inline function is part of the ABI.
 
 Member functions defined in-class are `inline` by default.
 
-**Exception**: Template functions (incl. template member functions) must be in headers and therefore inline.
+##### Exception
+
+Template functions (incl. template member functions) must be in headers and therefore inline.
 
 ##### Enforcement
 
@@ -2397,6 +2459,12 @@ Pure functions are easier to reason about, sometimes easier to optimize (and eve
 ##### Note
 
 `constexpr` functions are pure.
+
+When given a non-constant argument, a `constexpr` function can throw.
+If you consider exiting by throwing a side-effect, a `constexpr` function isn't completely pure;
+if not, this is not an issue.
+??? A question for the committee: can a constructor for an exception thrown by a `constexpr` function modify state?
+"No" would be a nice answer that matches most practice.
 
 ##### Enforcement
 
@@ -2555,6 +2623,7 @@ Unique owner types that are move-only and cheap-to-move, such as `unique_ptr`, c
 
 For example:
 
+    template <class T>
     void sink(std::unique_ptr<T> p) {
         // use p ... possibly std::move(p) onward somewhere else
     }   // p gets destroyed
@@ -3088,10 +3157,10 @@ Here on one popular implementation I got the output:
 
 I expected that because the call of `g()` reuses the stack space abandoned by the call of `f()` so `*p` refers to the space now occupied by `gx`.
 
-Imagine what would happen if `fx` and `gx` were of different types.
-Imagine what would happen if `fx` or `gx` was a type with an invariant.
-Imagine what would happen if more that dangling pointer was passed around among a larger set of functions.
-Imagine what a cracker could do with that dangling pointer.
+* Imagine what would happen if `fx` and `gx` were of different types.
+* Imagine what would happen if `fx` or `gx` was a type with an invariant.
+* Imagine what would happen if more that dangling pointer was passed around among a larger set of functions.
+* Imagine what a cracker could do with that dangling pointer.
 
 Fortunately, most (all?) modern compilers catch and warn against this simple case.
 
@@ -3217,7 +3286,9 @@ Better:
         return f();
     }
 
-**Exception**: `std::move` and `std::forward` do return `&&`, but they are just casts -- used by convention only in expression contexts where a reference to a temporary object is passed along within the same expression before the temporary is destroyed. We don't know of any other good examples of returning `&&`.
+##### Exception
+
+`std::move` and `std::forward` do return `&&`, but they are just casts -- used by convention only in expression contexts where a reference to a temporary object is passed along within the same expression before the temporary is destroyed. We don't know of any other good examples of returning `&&`.
 
 ##### Enforcement
 
@@ -3264,16 +3335,16 @@ This was primarily to avoid code of the form `(a = b) = c` -- such code is not c
 
 ##### Example
 
-        class Foo
-        {
-         public:
-            ...
-            Foo& operator=(const Foo& rhs) {
-              // Copy members.
-              ...
-              return *this;
-            }
-        };
+    class Foo
+    {
+     public:
+        ...
+        Foo& operator=(const Foo& rhs) {
+          // Copy members.
+          ...
+          return *this;
+        }
+    };
 
 ##### Enforcement
 
@@ -3307,7 +3378,9 @@ Functions can't capture local variables or be declared at local scope; if you ne
     }
     pool.join();
 
-**Exception**: Generic lambdas offer a concise way to write function templates and so can be useful even when a normal function template would do equally well with a little more syntax. This advantage will probably disappear in the future once all functions gain the ability to have Concept parameters.
+##### Exception
+
+Generic lambdas offer a concise way to write function templates and so can be useful even when a normal function template would do equally well with a little more syntax. This advantage will probably disappear in the future once all functions gain the ability to have Concept parameters.
 
 ##### Enforcement
 
@@ -3342,7 +3415,7 @@ There is not a choice when a set of functions are used to do a semantically equi
 ##### See also
 
 
-[Default arguments for virtual functions](#Rh-virtual-default-arg}
+[Default arguments for virtual functions](#Rh-virtual-default-arg)
 
 ##### Enforcement
 
@@ -3378,25 +3451,21 @@ Pointers and references to locals shouldn't outlive their scope. Lambdas that ca
 
 ##### Example, bad
 
-    {
-        int local = 42;
+    int local = 42;
 
-        // Want a reference to local.
-        // Note, that after program exits this scope,
-        // local no longer exists, therefore
-        // process() call will have undefined behavior!
-        thread_pool.queue_work([&]{ process(local); });
-    }
+    // Want a reference to local.
+    // Note, that after program exits this scope,
+    // local no longer exists, therefore
+    // process() call will have undefined behavior!
+    thread_pool.queue_work([&]{ process(local); });
 
 ##### Example, good
 
-    {
-        int local = 42;
-        // Want a copy of local.
-        // Since a copy of local is made, it will be
-        // available at all times for the call.
-        thread_pool.queue_work([=]{ process(local); });
-    }
+    int local = 42;
+    // Want a copy of local.
+    // Since a copy of local is made, it will be
+    // available at all times for the call.
+    thread_pool.queue_work([=]{ process(local); });
 
 ##### Enforcement
 
@@ -4129,7 +4198,7 @@ There is a lot of code that is non-specific about ownership.
 ##### Note
 
 If the `T*` or `T&` is owning, mark it `owning`. If the `T*` is not owning, consider marking it `ptr`.
-This will aide documentation and analysis.
+This will aid documentation and analysis.
 
 ##### Enforcement
 
@@ -4484,7 +4553,9 @@ A constructor establishes the invariant for a class. A user of a class should be
 
 Compilers do not read comments.
 
-**Exception**: If a valid object cannot conveniently be constructed by a constructor [use a factory function](#Rc-factory).
+##### Exception
+
+If a valid object cannot conveniently be constructed by a constructor [use a factory function](#Rc-factory).
 
 ##### Note
 
@@ -4560,7 +4631,9 @@ Leaving behind an invalid object is asking for trouble.
 For a variable definition (e.g., on the stack or as a member of another object) there is no explicit function call from which an error code could be returned.
 Leaving behind an invalid object and relying on users to consistently check an `is_valid()` function before use is tedious, error-prone, and inefficient.
 
-**Exception**: There are domains, such as some hard-real-time systems (think airplane controls) where (without additional tool support) exception handling is not sufficiently predictable from a timing perspective.
+##### Exception
+
+There are domains, such as some hard-real-time systems (think airplane controls) where (without additional tool support) exception handling is not sufficiently predictable from a timing perspective.
 There the `is_valid()` technique must be used. In such cases, check `is_valid()` consistently and immediately to simulate [RAII](#Rr-raii).
 
 **Alternative**: If you feel tempted to use some "post-constructor initialization" or "two-stage initialization" idiom, try not to do that.
@@ -4625,21 +4698,21 @@ A class with members that all have default constructors implicitly gets a defaul
         vector<int> v;
     };
 
-    X x; // means X{{ "{{" }}}, {}}; that is the empty string and the empty vector
+    X x; // means X{{}, {}}; that is the empty string and the empty vector
 
 Beware that built-in types are not properly default constructed:
 
     struct X {
-       string s;
-       int i;
+        string s;
+        int i;
     };
 
     void f()
     {
-       X x;    // x.s is initialized to the empty string; x.i is uninitialized
+        X x;    // x.s is initialized to the empty string; x.i is uninitialized
 
-       cout << x.s << ' ' << x.i << '\n';
-       ++x.i;
+        cout << x.s << ' ' << x.i << '\n';
+        ++x.i;
     }
 
 Statically allocated objects of built-in types are by default initialized to `0`, but local built-in variables are not.
@@ -4648,8 +4721,8 @@ Thus, code like the example above may appear to work, but it relies on undefined
 Assuming that you want initialization, an explicit default initialization can help:
 
     struct X {
-       string s;
-       int i {};   // default initialize (to 0)
+        string s;
+        int i {};   // default initialize (to 0)
     };
 
 ##### Enforcement
@@ -5434,7 +5507,7 @@ To prevent slicing, because the normal copy operations will copy only the base p
 
 It's good to return a smart pointer, but unlike with raw pointers the return type cannot be covariant (for example, `D::clone` can't return a `unique_ptr<D>`. Don't let this tempt you into returning an owning raw pointer; this is a minor drawback compared to the major robustness benefit delivered by the owning smart pointer.
 
-##### Exceptions
+##### Exception
 
 If you need covariant return types, return an `owner<derived*>`. See [C.130](#Rh-copy).
 
@@ -5937,7 +6010,7 @@ Interfaces should normally be composed entirely of public pure virtual functions
         unique_ptr<Goof> p {new Derived{"here we go"}};
         f(p.get()); // use Derived through the Goof interface
         g(p.get()); // use Derived through the Goof interface
-     } // leak
+    } // leak
 
 The `Derived` is `delete`d through its `Goof` interface, so its `string` is leaked.
 Give `Goof` a virtual destructor and all is well.
@@ -5993,7 +6066,7 @@ An abstract class typically does not have any data for a constructor to initiali
 
     ???
 
-##### Exceptions
+##### Exception
 
 * A base class constructor that does work, such as registering an object somewhere, may need a constructor.
 * In extremely rare cases, you might find it reasonable for an abstract class to have a bit of data shared by all derived classes
@@ -6040,9 +6113,11 @@ There are people who don't follow this rule because they plan to use a class onl
 
 ##### Reason
 
-Readability. Detection of mistakes. Writing explicit `virtual`, `override`, or `final` is self-documenting and enables the compiler to catch mismatch of types and/or names between base and derived classes. However, writing more than one of these three is both redundant and a potential source of errors.
+Readability.
+Detection of mistakes.
+Writing explicit `virtual`, `override`, or `final` is self-documenting and enables the compiler to catch mismatch of types and/or names between base and derived classes. However, writing more than one of these three is both redundant and a potential source of errors.
 
-Use `virtual` only when declaring a new virtual function. Use `override` only when declaring an overrider. Use `final` only when declaring an final overrider.
+Use `virtual` only when declaring a new virtual function. Use `override` only when declaring an overrider. Use `final` only when declaring an final overrider. If a base class destructor is declared `virtual`, derived class destructors should neither be declared `virtual` nor `override`.
 
 ##### Example, bad
 
@@ -6054,14 +6129,17 @@ Use `virtual` only when declaring a new virtual function. Use `override` only wh
     };
 
     struct D : B {
-        void f1(int);        // warn: D::f1() hides B::f1()
-        void f2(int) const;  // warn: no explicit override
-        void f3(double);     // warn: D::f3() hides B::f3()
+        void f1(int);        // bad (hope for a warning): D::f1() hides B::f1()
+        void f2(int) const;  // bad (but conventional and valid): no explicit override
+        void f3(double);     // bad (hope for a warning): D::f3() hides B::f3()
         // ...
     };
 
-    struct D2 : B {
-        virtual void f2(int) final;  // BAD; pitfall, D2::f does not override B::f
+    struct Better : B {
+        void f1(int) override;        // error (caught): D::f1() hides B::f1()
+        void f2(int) const override;
+        void f3(double) override;     // error (caught): D::f3() hides B::f3()
+        // ...
     };
 
 ##### Enforcement
@@ -6153,8 +6231,8 @@ the more benefits we gain - and the less stable the hierarchy is.
 
 This Shape hierarchy can be rewritten using interface inheritance:
 
-     class Shape {  // pure interface
-     public:
+    class Shape {  // pure interface
+    public:
         virtual Point center() const = 0;
         virtual Color color() const = 0;
 
@@ -6164,7 +6242,7 @@ This Shape hierarchy can be rewritten using interface inheritance:
         virtual void redraw() = 0;
 
         // ...
-     };
+    };
 
 Note that a pure interface rarely have constructors: there is nothing to construct.
 
@@ -6233,8 +6311,8 @@ Now `Shape` is a poor example of a class with an implementation,
 but bear with us because this is just a simple example of a technique aimed at more complex hierarchies.
 
 
-     class Impl::Circle : public Circle, public Impl::Shape {   // implementation
-     public:
+    class Impl::Circle : public Circle, public Impl::Shape {   // implementation
+    public:
         // constructors, destructor
 
         int radius() { /* ... */ }
@@ -6423,7 +6501,7 @@ Most classes are either all A or all B:
   [By convention, declare such classes `struct` rather than `class`](#Rc-struct)
 * *All private*: If you're writing a type that maintains an invariant, then all the non-`const` variables should be private -- it should be encapsulated.
 
-##### Exceptions
+##### Exception
 
 Occasionally classes will mix A and B, usually for debug reasons. An encapsulated object may contain something like non-`const` debug instrumentation that isn't part of the invariant and so falls into category A -- it isn't really part of the object's value or meaningful observable state either. In that case, the A parts should be treated as A's (made `public`, or in rarer cases `protected` if they should be visible only to derived classes) and the B parts should still be treated like B's (`private` or `const`).
 
@@ -6543,7 +6621,7 @@ Capping an individual virtual function with `final` is error-prone as that `fina
 
     // ...
 
-    use(new Better_interface{});
+    use(new Better_implementation{});
 
 The problem is easy to see in a small example, but in a large hierarchy with many virtual functions, tools are required for reliably spotting such problems.
 Consistent use of `override` would catch this.
@@ -6700,20 +6778,20 @@ Consider:
         cout << pb2->id(); // "D"
 
         if (pb1->id() == pb2->id()) // *pb1 is the same type as *pb2
-        if (pb2 == "D") {         // looks innocent
-                D* pd = static_cast<D*>(pb1);
-                // ...
+        if (pb2->id() == "D") {         // looks innocent
+            D* pd = static_cast<D*>(pb1);
+            // ...
         }
         // ...
     }
 
-The result of `pb2 == "D"` is actually implementation defined.
+The result of `pb2->id() == "D"` is actually implementation defined.
 We added it to warn of the dangers of home-brew RTTI.
 This code may work as expected for years, just to fail on a new machine, new compiler, or a new linker that does not unify character literals.
 
 If you implement your own RTTI, be careful.
 
-##### Exceptions
+##### Exception
 
 If your implementation provided a really slow `dynamic_cast`, you may have to use a workaround.
 However, all workarounds that cannot be statically resolved involve explicit casting (typically `static_cast`) and are error-prone.
@@ -6843,7 +6921,7 @@ Subscripting the resulting base pointer will lead to invalid object access and p
 
     void use(B*);
 
-    D a[] = {{ "{{" }}1, 2}, {3, 4}, {5, 6}};
+    D a[] = {{1, 2}, {3, 4}, {5, 6}};
     B* p = a;     // bad: a decays to &a[0] which is converted to a B*
     p[1].x = 7;   // overwrite D[0].y
 
@@ -7167,7 +7245,7 @@ Readability. Convention. Reusability. Support for generic code
 
 ##### Example
 
-    void cout_my_class(const my_class& c) // confusing, not conventional,not generic
+    void cout_my_class(const My_class& c) // confusing, not conventional,not generic
     {
         std::cout << /* class members here */;
     }
@@ -7221,28 +7299,81 @@ The compiler catches the attempt to overload a lambda.
 
 ## <a name="SS-union"></a>C.union: Unions
 
-???
+A `union` is a `struct` where all members start at the same address so that it can hold only one member at a time.
+A `union` does not keep track of which member is stored so the programmer has to get it right;
+this is inherently error-prone, but there are ways to compensate.
+
+A type that is a `union` plus an indicator of which member is currently held is called a *tagged union*, a *discriminated union*, or a *variant*.
 
 Union rule summary:
 
-* [C.180: Use `union`s to ???](#Ru-union)
+* [C.180: Use `union`s to save Memory](#Ru-union)
 * [C.181: Avoid "naked" `union`s](#Ru-naked)
 * [C.182: Use anonymous `union`s to implement tagged unions](#Ru-anonymous)
+* [C.183: Don't use a `union` for type punning](#Ru-pun)
 * ???
 
-### <a name="Ru-union"></a>C.180: Use `union`s to ???
-
-??? When should unions be used, if at all? What's a good future-proof way to re-interpret object representations of PODs?
-??? variant
+### <a name="Ru-union"></a>C.180: Use `union`s to save memory
 
 ##### Reason
 
- ???
+A `union` allows a single piece of memory to be used for different types of objects at different times.
+Consequently, it can be used to save memory when we have several objects that are never used at the same time.
 
 ##### Example
 
+    union Value {
+        int x;
+        double d;
+    };
 
-    ???
+    Value v = { 123 };  // now v holds an int
+    cout << v.x << '\n';    // write 123
+    v.d = 987.654;  // now v holds a double
+    cout << v.d << '\n';    // write 987.654
+
+But heed the warning: [Avoid "naked" `union`s](#Ru-naked)
+
+##### Example
+
+    // Short string optimization
+    
+    constexpr size_t buffer_size = 16; // Slightly larger than the size of a pointer
+    
+    class Immutable_string {
+    public:
+        Immutable_string(const char* str) :
+            size(strlen(str))
+        {
+            if (size < buffer_size)
+                strcpy_s(string_buffer, buffer_size, str);
+            else {
+                string_ptr = new char[size + 1];
+                strcpy_s(string_ptr, size + 1, str);
+            }
+        }
+    
+        ~Immutable_string()
+        {
+            if (size >= buffer_size)
+                delete string_ptr;
+        }
+    
+        const char* get_str() const
+        {
+            return (size < buffer_size) ? string_buffer : string_ptr;
+        }
+    
+    private:
+        // If the string is short enough, we store the string itself
+        // instead of a pointer to the string.
+        union {
+            char* string_ptr;
+            char string_buffer[buffer_size];
+        };
+    
+        const size_t size;
+    };
 
 ##### Enforcement
 
@@ -7252,18 +7383,44 @@ Union rule summary:
 
 ##### Reason
 
-
+A *naked union* is a union without an associated indicator which member (if any) it holds,
+so that the programmer has to keep track.
 Naked unions are a source of type errors.
 
-**Alternative**: Wrap them in a class together with a type field.
+###### Example, bad
 
-**Alternative**: Use `variant`.
+    union Value {
+        int x;
+        double d;
+    };
 
-##### Example
+    Value v;
+    v.d = 987.654;  // v holds a double
 
-    ???
+So far, so good, but we can easily misuse the `union`:
 
+    cout << v.x << '\n';    // BAD, undefined behavior: v holds a double, but we read it as an int
 
+Note that the type error happened without any explicit cast.
+When we tested that program the last value printed was `1683627180` which it the integer value for the bit pattern for `987.654`.
+What we have here is an "invisible" type error that happens to give a result that could easily look innocent.
+
+And, talking about "invisible", this code produced no output:
+
+    v.x = 123;
+    cout << v.d << '\n';    // BAD: undefined behavior
+
+###### Alternative
+
+Wrap a `union` in a class together with a type field.
+
+The soon-to-be-standard `variant` type (to be found in `<variant>`) does that for you:
+
+    variant<int, double> v;
+    v = 123;        // v holds an int
+    int x = get<int>(v);
+    v = 123.456;    // v holds a double
+    w = get<double>(v);
 
 ##### Enforcement
 
@@ -7273,15 +7430,148 @@ Naked unions are a source of type errors.
 
 ##### Reason
 
-???
+A well-designed tagged union is type safe.
+An *anonymous* union simplifies the definition of a class with a (tag, union) pair.
 
 ##### Example
 
-    ???
+This example is mostly borrowed from TC++PL4 pp216-218.
+You can look there for an explanation.
+
+The code is somewhat elaborate.
+Handling a type with user-defined assignment and destructor is tricky.
+Saving programmers from having to write such code is one reason for including `variant` in the standard.
+
+    class Value { // two alternative representations represented as a union
+    private:
+        enum class Tag { number, text };
+        Tag type; // discriminant
+
+        union { // representation (note: anonymous union)
+            int i;
+            string s; // string has default constructor, copy operations, and destructor
+        };
+    public:
+        struct Bad_entry { }; // used for exceptions
+
+        ~Value();
+        Value& operator=(const Value&);   // necessary because of the string variant
+        Value(const Value&);
+        // ...
+        int number() const;
+        string text() const;
+
+        void set_number(int n);
+        void set_text(const string&);
+        // ...
+    };
+
+    int Value::number() const
+    {
+        if (type != Tag::number) throw Bad_entry{};
+        return i;
+    }
+
+    string Value::text() const
+    {
+        if (type != Tag::text) throw Bad_entry{};
+        return s;
+    }
+
+    void Value::set_number(int n)
+    {
+        if (type == Tag::text) {
+            s.~string();      // explicitly destroy string
+            type = Tag::number;
+        }
+        i = n;
+    }
+
+    void Value::set_text(const string& ss)
+    {
+        if (type == Tag::text)
+            s = ss;
+        else {
+            new(&s) string{ss};   // placement new: explicitly construct string
+            type = Tag::text;
+        }
+    }
+
+    Value& Value::operator=(const Value& e)   // necessary because of the string variant
+    {
+        if (type == Tag::text && e.type == Tag::text) {
+            s = e.s;    // usual string assignment
+            return *this;
+        }
+
+        if (type == Tag::text) s.~string(); // explicit destroy
+
+        switch (e.type) {
+        case Tag::number:
+            i = e.i;
+            break;
+        case Tag::text:
+            new(&s)(e.s);   // placement new: explicit construct
+            type = e.type;
+        }
+
+        return *this;
+    }
+
+    Value::~Value()
+    {
+        if (type == Tag::text) s.~string(); // explicit destroy
+    }
 
 ##### Enforcement
 
 ???
+
+### <a name="Ru-pun"></a>C.183: Don't use a `union` for type punning
+
+##### Reason
+
+It is undefined behavior to read a `union` member with a different type from the one with which it was written.
+Such punning is invisible, or at least harder to spot than using a named cast.
+Type punning using a `union` is a source of errors.
+
+##### Example, bad
+
+    union Pun {
+        int x;
+        unsigned char c[sizeof(int)];
+    };
+
+The idea of `Pun` is to be able to look at the character representation of an `int`.
+
+    void bad(Pun& u)
+    {
+        u.x = 'x';
+        cout << u.c[0] << '\n';     // undefined behavior
+    }
+
+If you wanted to see the bytes of an `int`, use a (named) cast:
+
+    void if_you_must_pun(int& x)
+    {
+        auto p = reinterpret_cast<unsigned char*>(&x);
+        cout << p[0] << '\n';     // undefined behavior
+        // ...
+    }
+
+Accessing the result of an `reinterpret_cast` to a different type from the objects declared type is still undefined behavior,
+but at least we can see that something tricky is going on.
+
+##### Note
+
+Unfortunately, `union`s are commonly used for type punning.
+We don't consider "sometimes, it works as expected" a strong argument.
+
+##### Enforcement
+
+???
+
+
 
 # <a name="S-enum"></a>Enum: Enumerations
 
@@ -7414,14 +7704,14 @@ Convenience of use and avoidance of errors.
 
 ##### Example
 
-    enum Day { mon, tue, wed, thu, fri, sat, sun };
+    enum class Day { mon, tue, wed, thu, fri, sat, sun };
 
     Day operator++(Day& d)
     {
-        return d == sun ? mon : Day{++d};
+        return d == Day::sun ? Day::mon : Day{++d};
     }
 
-    Day today = sat;
+    Day today = Day::sat;
     Day tomorrow = ++today;
 
 ##### Enforcement
@@ -7489,9 +7779,9 @@ The default is the easiest to read and write.
     enum class Direction : char { n, s, e, w,
                                   ne, nw, se, sw };  // underlying type saves space
 
-    enum class Web_color : int { red = 0xFF0000,
-                                green = 0x00FF00,
-                                blue = 0x0000FF };  // underlying type is redundant
+    enum class Web_color : int { red   = 0xFF0000,
+                                 green = 0x00FF00,
+                                 blue  = 0x0000FF };  // underlying type is redundant
 
 ##### Note
 
@@ -7671,7 +7961,9 @@ Use a `span` instead.
         // ... uses *p and p[0] only ...
     }
 
-**Exception**: C-style strings are passed as single pointers to a zero-terminated sequence of characters.
+##### Exception
+
+C-style strings are passed as single pointers to a zero-terminated sequence of characters.
 Use `zstring` rather than `char*` to indicate that you rely on that convention.
 
 ##### Note
@@ -7723,7 +8015,7 @@ We can fix that problem by making ownership explicit:
         T* q;         // OK: q is not owning
     };
 
-##### Exceptions
+##### Exception
 
 A major class of exception is legacy code, especially code that must remain compilable as C or interface with C and C-style C++ through ABIs.
 The fact that there are billions of lines of code that violate this rule against owning `T*`s cannot be ignored.
@@ -7855,9 +8147,13 @@ They are a notable source of errors.
 If you use a global object initialize it with a constant.
 Note that it is possible to get undefined initialization order even for `const` objects.
 
-**Exception**: A global object is often better than a singleton.
+##### Exception
 
-**Exception**: An immutable (`const`) global does not introduce the problems we try to avoid by banning global objects.
+A global object is often better than a singleton.
+
+##### Exception
+
+An immutable (`const`) global does not introduce the problems we try to avoid by banning global objects.
 
 ##### Enforcement
 
@@ -7952,7 +8248,7 @@ The allocation of `buf` may fail and leak the file handle.
 
     void f(const string& name)
     {
-        ifstream f{name, "r"};   // open the file
+        ifstream f{name};   // open the file
         vector<char> buf(1024);
         // ...
     }
@@ -8212,14 +8508,14 @@ Any type (including primary template or specialization) that overloads unary `*`
 ##### Example
 
     // use Boost's intrusive_ptr
-    #include <boost/intrusive_ptr.hpp>
+    #include<boost/intrusive_ptr.hpp>
     void f(boost::intrusive_ptr<widget> p)  // error under rule 'sharedptrparam'
     {
         p->foo();
     }
 
     // use Microsoft's CComPtr
-    #include <atlbase.h>
+    #include<atlbase.h>
     void f(CComPtr<widget> p)               // error under rule 'sharedptrparam'
     {
         p->foo();
@@ -8421,6 +8717,7 @@ Declaration rules:
 * [ES.9: Avoid `ALL_CAPS` names](#Res-not-CAPS)
 * [ES.10: Declare one name (only) per declaration](#Res-name-one)
 * [ES.11: Use `auto` to avoid redundant repetition of type names](#Res-auto)
+* [ES.12: Do not reuse names in nested scopes](#Res-reuse)
 * [ES.20: Always initialize an object](#Res-always)
 * [ES.21: Don't introduce a variable (or constant) before you need to use it](#Res-introduce)
 * [ES.22: Don't declare a variable until you have a value to initialize it with](#Res-init)
@@ -8503,7 +8800,9 @@ but don't hand-code a well-known algorithm:
     for (int i = 0; i < max; ++i)
         sum = sum + v[i];
 
-**Exception**: Large parts of the standard library rely on dynamic allocation (free store). These parts, notably the containers but not the algorithms, are unsuitable for some hard-real time and embedded applications. In such cases, consider providing/using similar facilities, e.g.,  a standard-library-style container implemented using a pool allocator.
+##### Exception
+
+Large parts of the standard library rely on dynamic allocation (free store). These parts, notably the containers but not the algorithms, are unsuitable for some hard-real time and embedded applications. In such cases, consider providing/using similar facilities, e.g.,  a standard-library-style container implemented using a pool allocator.
 
 ##### Enforcement
 
@@ -8666,7 +8965,7 @@ An index is conventionally called `i` and there is no hint about the meaning of 
                 current_element_index < current_vector.size();
                 ++current_element_index
         )
-        target_stream << current_vector[i] << '\n';
+        target_stream << current_vector[current_element_index] << '\n';
     }
 
 Yes, it is a caricature, but we have seen worse.
@@ -8778,9 +9077,11 @@ comment.
 
 ##### Example, bad
 
-       char *p, c, a[7], *pp[7], **aa[10];   // yuck!
+    char *p, c, a[7], *pp[7], **aa[10];   // yuck!
 
-**Exception**: a function declaration can contain several function argument declarations.
+##### Exception
+
+A function declaration can contain several function argument declarations.
 
 ##### Example
 
@@ -8836,7 +9137,9 @@ In each case, we save writing a longish, hard-to-remember type that the compiler
     template<class T>
     auto Container<T>::first() -> Iterator;   // Container<T>::Iterator
 
-**Exception**: Avoid `auto` for initializer lists and in cases where you know exactly which type you want and where an initializer might require conversion.
+##### Exception
+
+Avoid `auto` for initializer lists and in cases where you know exactly which type you want and where an initializer might require conversion.
 
 ##### Example
 
@@ -8854,6 +9157,99 @@ When concepts become available, we can (and should) be more specific about the t
 
 Flag redundant repetition of type names in a declaration.
 
+### <a name="Res-reuse"></a>ES.12: Do not reuse names in nested scopes
+
+##### Reason
+
+It is easy to get confused about which variable is used.
+Can cause maintenance problems.
+
+##### Example, bad
+
+    int d = 0;
+    // ...
+    if (cond) {
+        // ...
+        d = 9;
+        // ...
+    }
+    else {
+        // ...
+        int d = 7;
+        // ...
+        d = value_to_be_returned;
+        // ...
+    }
+
+    return d;
+
+If this is a large `if`-statement, it is easy to overlook that a new `d` has been introduced in the inner scope.
+This is a known source of bugs.
+Sometimes such reuse of a name in an inner scope is called "shadowing".
+
+##### Note
+
+Shadowing is primarily a problem when functions are too large and too complex.
+
+##### Example
+
+Shadowing of function arguments in the outermost block is disallowed by the language:
+
+    void f(int x)
+    {
+        int x = 4;  // error: reuse of function argument name
+
+        if (x) {
+            int x = 7;  // allowed, but bad
+            // ...
+        }
+    }
+
+##### Example, bad
+
+Reuse of a member name as a local variable can also be a problem:
+
+    struct S {
+        int m;
+        void f(int x);
+    };
+
+    void S::f(int x)
+    {
+        m = 7;    // assign to member
+        if (x) {
+            int m = 9;
+            // ...
+            m = 99; // assign to member
+            // ...
+        }
+    }
+
+##### Exception
+
+We often reuse function names from a base class in a derived class:
+
+    struct B {
+        void f(int);
+    };
+
+    struct D : B {
+        void f(double);
+        using B::f;
+    };
+
+This is error-prone.
+For example, had we forgotten the using declaration, a call `d.f(1)` would not have found the `int` version of `f`.
+
+??? Do we need a specific rule about shadowing/hiding in class hierarchies?
+
+##### Enforcement
+
+* Flag reuse of a name in nested local scopes
+* Flag reuse of a member name as a local variable in a member function
+* Flag reuse of a global name as a local variable or a member name
+* Flag reuse of a base class member name in a derived class (except for function names)
+
 ### <a name="Res-always"></a>ES.20: Always initialize an object
 
 ##### Reason
@@ -8864,9 +9260,9 @@ Simplify refactoring.
 
 ##### Example
 
-    void use(int arg)   // bad: uninitialized variable
+    void use(int arg)
     {
-        int i;
+        int i;   // bad: uninitialized variable
         // ...
         i = 7;   // initialize i
     }
@@ -8964,7 +9360,7 @@ The cost of initializing that array could be significant in some situations.
 However, such examples do tend to leave uninitialized variables accessible, so they should be treated with suspicion.
 
     constexpr int max = 8 * 1024;
-    int buf[max] = {0};   // better in some situations
+    int buf[max] = {};   // zero all elements; better in some situations
     f.read(buf, max);
 
 When feasible use a library function that is known not to overflow. For example:
@@ -9101,8 +9497,8 @@ The rules for `{}` initialization are simpler, more general, less ambiguous, and
 
 ##### Example
 
-       int x {f(99)};
-       vector<int> v = {1, 2, 3, 4, 5, 6};
+    int x {f(99)};
+    vector<int> v = {1, 2, 3, 4, 5, 6};
 
 ##### Exception
 
@@ -9139,7 +9535,9 @@ For containers, there is a tradition for using `{...}` for a list of elements an
 Initialization of a variable declared using `auto` with a single value, e.g., `{v}`, had surprising results until recently:
 
     auto x1 {7};        // x1 is an int with the value 7
-    auto x2 = {7};      // x2 is an initializer_list<int> with an element 7
+    // x2 is an initializer_list<int> with an element 7
+    // (this will will change to "element 7" in C++17)
+    auto x2 = {7};
 
     auto x11 {7, 8};    // error: two initializers
     auto x22 = {7, 8};  // x2 is an initializer_list<int> with elements 7 and 8
@@ -9149,6 +9547,10 @@ Initialization of a variable declared using `auto` with a single value, e.g., `{
 Use `={...}` if you really want an `initializer_list<T>`
 
     auto fib10 = {0, 1, 2, 3, 5, 8, 13, 25, 38, 63};   // fib10 is a list
+
+##### Note
+
+Old habits die hard, so this rule is hard to apply consistently, especially as there are so many cases where `=` is innocent.
 
 ##### Example
 
@@ -9424,7 +9826,7 @@ Requires messy cast-and-macro-laden code to get working right.
 
 ##### Example
 
-    #include <cstdarg>
+    #include<cstdarg>
 
     // "severity" followed by a zero-terminated list of char*s; write the C-style strings to cerr
     void error(int severity ...)
@@ -9563,15 +9965,15 @@ Readability: the complete logic of the loop is visible "up front". The scope of 
 ##### Example
 
     for (int i = 0; i < vec.size(); i++) {
-     // do work
+        // do work
     }
 
 ##### Example, bad
 
     int i = 0;
     while (i < vec.size()) {
-     // do work
-     i++;
+        // do work
+        i++;
     }
 
 ##### Enforcement
@@ -9634,7 +10036,7 @@ The termination condition is at the end (where it can be overlooked) and the con
     int x;
     do {
         cin >> x;
-        x
+        // ...
     } while (x < 0);
 
 ##### Enforcement
@@ -10012,7 +10414,7 @@ A key example is basic narrowing:
 
     double d = 7.9;
     int i = d;    // bad: narrowing: i becomes 7
-    i = (int)d;   // bad: we're going to claim this is still not explicit enough
+    i = (int) d;  // bad: we're going to claim this is still not explicit enough
 
     void f(int x, long y, double d)
     {
@@ -10139,7 +10541,7 @@ for example.)
 
 Flag C-style and functional casts.
 
-## <a name="Res-casts-const"></a>ES.50: Don't cast away `const`
+### <a name="Res-casts-const"></a>ES.50: Don't cast away `const`
 
 ##### Reason
 
@@ -10153,7 +10555,91 @@ Such examples are often handled as well or better using `mutable` or an indirect
 
 ##### Example
 
-    ???
+Consider keeping previously computed results around for a costly operation:
+
+    int compute(int x); // compute a value for x; assume this to be costly
+
+    class Cache {   // some type implementing a cache for an int->int operation
+    public:
+        pair<bool, int> find(int x) const;   // is there a value for x?
+        void set(int x, int v);             // make y the value for x
+        // ...
+    private:
+        // ...
+    };
+
+    class X {
+    public:
+        int get_val(int x)
+        {
+            auto p = cache.find(x);
+            if (p.first) return p.second;
+            int val = compute(x);
+            cache.set(x, val); // insert value for x
+            return val;
+        }
+        // ...
+    private:
+        Cache cache;
+    };
+
+Here, `get_val()` is logically constant, so we would like to make it a `const` member.
+To do this we still need to mutate `cache`, so people sometimes resort to a `const_cast`:
+
+    class X {   // Suspicious solution based on casting
+    public:
+        int get_val(int x) const
+        {
+            auto p = cache.find(x);
+            if (p.first) return p.second;
+            int val = compute(x);
+            const_cast<Cache&>(cache).set(x, val);   // ugly
+            return val;
+        }
+        // ...
+    private:
+        Cache cache;
+    };
+
+Fortunately, there is a better solution:
+State that `cache` is mutable even for a `const` object:
+
+    class X {   // better solution
+    public:
+        int get_val(int x) const
+        {
+            auto p = cache.find(x);
+            if (p.first) return p.second;
+            int val = compute(x);
+            cache.set(x, val);
+            return val;
+        }
+        // ...
+    private:
+        mutable Cache cache;
+    };
+
+An alternative solution would to store a pointer to the `cache`:
+
+    class X {   // OK, but slightly messier solution
+    public:
+        int get_val(int x) const
+        {
+            auto p = cache->find(x);
+            if (p.first) return p.second;
+            int val = compute(x);
+            cache->set(x, val);
+            return val;
+        }
+        // ...
+    private:
+        unique_ptr<Cache> cache;
+    };
+
+That solution is the most flexible, but requires explicit construction and destruction of `*cache`
+(most likely in the constructor and destructor of `X`).
+
+In any variant, we must guard against data races on the `cache` in multithreaded code, possibly using a `std::mutex`.
 
 ##### Enforcement
 
@@ -10380,7 +10866,7 @@ In the rare cases where the slicing was deliberate the code can be surprising.
     class Shape { /* ... */ };
     class Circle : public Shape { /* ... */ Point c; int r; };
 
-    Circle c {{ "{{" }}0, 0}, 42};
+    Circle c {{0, 0}, 42};
     Shape s {c};    // copy Shape part of Circle
 
 The result will be meaningless because the center and radius will not be copied from `c` into `s`.
@@ -10416,9 +10902,14 @@ Avoid wrong results.
 
 ##### Example
 
-    unsigned x = 100;
-    unsigned y = 102;
-    cout << abs(x-y) << '\n'; // wrong result
+    int x = -3;
+    unsigned int y = 7;
+
+    cout << x - y << '\n';  // unsigned result, possibly 4294967286
+    cout << x + y << '\n';  // unsigned result: 4
+    cout << x * y << '\n';  // unsigned result, possibly 4294967275
+
+It is harder to spot the problem in more realistic examples.
 
 ##### Note
 
@@ -10437,33 +10928,82 @@ Unsigned types support bit manipulation without surprises from sign bits.
 
 ##### Example
 
-    ???
+    unsigned char x = 0b1010'1010;
+    unsigned char y = ~x;   // y == 0b0101'0101;
 
-**Exception**: Use unsigned types if you really want modulo arithmetic - add
-comments as necessary noting the reliance on overflow behavior, as such code
-is going to be surprising for many programmers.
+##### Note
+
+Unsigned types can also be useful for modulo arithmetic.
+However, if you want modulo arithmetic add
+comments as necessary noting the reliance on wraparound behavior, as such code
+can be surprising for many programmers.
 
 ##### Enforcement
 
-???
+* Just about impossible in general because of the use of unsigned subscripts in the standard library
+* ???
 
 ### <a name="Res-signed"></a>ES.102: Use signed types for arithmetic
 
 ##### Reason
 
-Signed types support modulo arithmetic without surprises from lack of sign bits.
+Because most arithmetic is assumed to be signed;
+`x-y` yields a negative number when `y>x` except in the rare cases where you really want modulo arithmetic.
 
 ##### Example
 
-    ???
+Unsigned arithmetic can yield surprising results if you are not expecting it.
+This is even more true for mixed signed and unsigned arithmetic.
 
-**Exception**: Use unsigned types if you really want modulo arithmetic - add
+    template<typename T, typename T2>
+    T subtract(T x, T2 y)
+    {
+        return x-y;
+    }
+
+    void test()
+    {
+        int s = 5;
+        unsigned int us = 5;
+        cout << subtract(s, 7) << '\n';     // -2
+        cout << subtract(us, 7u) << '\n';   // 4294967294
+        cout << subtract(s, 7u) << '\n';    // -2
+        cout << subtract(us, 7) << '\n';    // 4294967294
+        cout << subtract(s, us+2) << '\n';  // -2
+        cout << subtract(us, s+2) << '\n';  // 4294967294
+    }
+
+Here we have been very explicit about what's happening,
+but if you had see `us-(s+2)` or `s+=2; ... us-s` would you reliably have suspected that the result would print as `4294967294`?
+
+##### Exception
+
+Use unsigned types if you really want modulo arithmetic - add
 comments as necessary noting the reliance on overflow behavior, as such code
 is going to be surprising for many programmers.
 
+##### Example
+
+The standard library uses unsigned types for subscripts.
+The build-in array uses signed types for subscripts.
+This makes surprises (and bugs) inevitable.
+
+    int a[10];
+    for (int i=0; i < 10; ++i) a[i]=i;
+    vector<int> v(10);
+    // compares signed to unsigned; some compilers warn
+    for (int i=0; v.size() < 10; ++i) v[i]=i;
+
+    int a2[-2];         // error: negative size
+
+    // OK, but the number of ints (4294967294) is so large that we should get an exception
+    vector<int> v2(-2);
+
 ##### Enforcement
 
-???
+* Flag mixed signed and unsigned arithmetic
+* Flag results of unsigned arithmetic assigned to or printed as signed.
+* Flag unsigned literals (e.g. `-2`) used as container subscripts.
 
 ### <a name="Res-overflow"></a>ES.103: Don't overflow
 
@@ -10492,7 +11032,9 @@ Incrementing a value beyond a maximum value can lead to memory corruption and un
 
     auto a = area(10'000'000, 100'000'000);   // bad
 
-**Exception**: Use unsigned types if you really want modulo arithmetic.
+##### Exception
+
+Use unsigned types if you really want modulo arithmetic.
 
 **Alternative**: For critical applications that can afford some overhead, use a range-checked integer and/or floating-point type.
 
@@ -10515,7 +11057,9 @@ Decrementing a value beyond a minimum value can lead to memory corruption and un
     while (n--)
         a[n - 1] = 9;   // bad (twice)
 
-**Exception**: Use unsigned types if you really want modulo arithmetic.
+##### Exception
+
+Use unsigned types if you really want modulo arithmetic.
 
 ##### Enforcement
 
@@ -10574,6 +11118,7 @@ Performance rule summary:
 * [Per.4: Don't assume that complicated code is necessarily faster than simple code](#Rper-simple)
 * [Per.5: Don't assume that low-level code is necessarily faster than high-level code](#Rper-low)
 * [Per.6: Don't make claims about performance without measurements](#Rper-measure)
+* [Per.7: Design to enable optimization](#Rper-efficiency)
 * [Per.10: Rely on the static type system](#Rper-type)
 * [Per.11: Move computation from run time to compile time](#Rper-Comp)
 * [Per.12: Eliminate redundant aliases](#Rper-alias)
@@ -10687,6 +11232,171 @@ Often, you will be surprised.
 
 ???
 
+### <a name="Rper-efficiency"></a>Per.7: Design to enable optimization
+
+##### Reason
+
+Because we often need to optimize the initial design.
+Because a design that ignore the possibility of later improvement is hard to change.
+
+##### Example
+
+From the C (and C++) standard:
+
+    void qsort (void* base, size_t num, size_t size, int (*compar)(const void*, const void*));
+
+When did you even want to sort memory?
+Really, we sort sequences of elements, typically stored in containers.
+A call to `qsort` throws away much useful information (e.g., the element type), forces the user to repeat information
+already known (e.g., the element size), and forces the user to write extra code (e.g., a function to compare `double`s).
+This implies added work for the programmer, is error prone, and deprives the compiler of information needed for optimization.
+
+    double data[100];
+    // ... fill a ...
+
+    // 100 chunks of memory of sizeof(double) starting at
+    // address data using the order defined by compare_doubles
+    qsort(data, 100, sizeof(double), compare_doubles);
+
+From the point of view of interface design is that `qsort` throws away useful information.
+
+We can do better (in C++98)
+
+    template<typename Iter>
+        void sort(Iter b, Iter e);  // sort [b:e)
+
+    sort(data, data + 100);
+
+Here, we use the compiler's knowledge about the size of the array, the type of elements, and how to compare `double`s.
+
+With C++11 plus [concepts](#???), we can do better still
+
+    // Sortable specifies that c must be a
+    // random-access sequence of elements comparable with <
+    void sort(Sortable& c);
+
+    sort(c);
+
+The key is to pass sufficient information for a good implementation to be chosen.
+In this, the `sort` interfaces shown here still have a weakness:
+They implicitly rely on the element type having less-than (`<`) defined.
+To complete the interface, we need a second version that accepts a comparison criteria:
+
+    // compare elements of c using p
+    void sort(Sortable& c, Predicate<Value_type<Sortable>> p);
+
+The standard-library specification of `sort` offers those two versions,
+but the semantics is expressed in English rather than code using concepts.
+
+##### Note
+
+Premature optimization is said to be [the root of all evil](#Rper-Knuth), but that's not a reason to despise performance.
+It is never premature to consider what makes a design amenable to improvement, and improved performance is a commonly desired improvement.
+Aim to build a set of habits that by default results in efficient, maintainable, and optimizable code.
+In particular, when you write a function that is not a one-off implementation detail, consider
+
+* Information passing:
+Prefer clean [interfaces](#S-interfaces) carrying sufficient information for later improvement of implementation.
+Note that information flows into and out of an implementation through the interfaces we provide.
+* Compact data: By default, [use compact data](#Rper-compact), such as `std::vector` and [access it in a systematic fashion](#Rper-access).
+If you think you need a linked structure, try to craft the interface so that this structure isn't seen by users.
+* Function argument passing and return:
+Distinguish between mutable and non-mutable data.
+Don't impose a resource management burden on your users.
+Don't impose spurious run-time indirections on your users.
+Use [conventional ways](#Rf-conventional) of passing information through an interface;
+unconventional and/or "optimized" ways of passing data can seriously complicate later reimplementation.
+* Abstraction:
+Don't overgeneralize; a design that tries to cater for every possible use (and misuse) and defers every design decision for later
+(using compile-time or run-time indirections) is usually a complicated, bloated, hard-to-understand mess.
+Generalize from concrete examples, preserving performance as we generalize.
+Do not generalize based on mere speculation about future needs.
+The ideal is zero-overhead generalization.
+* Libraries:
+Use libraries with good interfaces.
+If no library is available build one yourself and imitate the interface style from a good library.
+The [standard library](#S-stdlib) is a good first place to look for inspiration.
+* Isolation:
+Isolate your code from messy and/or old style code by providing an interface of your choosing to it.
+This is sometimes called "providing a wrapper" for the useful/necessary but messy code.
+Don't let bad designs "bleed into" your code.
+
+##### Example
+
+Consider:
+
+    template <class ForwardIterator, class T>
+    bool binary_search(ForwardIterator first, ForwardIterator last, const T& val);
+
+`binary_search(begin(c), end(c), 7)` will tell you whether `7` is in `c` or not.
+However, it will not tell you where that `7` is or whether there are more than one `7`.
+
+Sometimes, just passing the minimal amount of information back (here, `true` or `false`) is sufficient, but a good interface passes
+needed information back to the caller. Therefore, the standard library also offers
+
+    template <class ForwardIterator, class T>
+    ForwardIterator lower_bound(ForwardIterator first, ForwardIterator last, const T& val);
+
+`lower_bound` returns an iterator to the first match if any, otherwise `last`.
+
+However, `lower_bound` still doesn't return enough information for all uses, so the standard library also offers
+
+    template <class ForwardIterator, class T>
+    pair<ForwardIterator, ForwardIterator>
+    equal_range(ForwardIterator first, ForwardIterator last, const T& val);
+
+`equal_range` returns a `pair` of iterators specifying the first and one beyond last match.
+
+    auto r = equal_range(begin(c), end(c), 7);
+    for (auto p = r.first(); p != r.second(), ++p)
+        cout << *p << '\n';
+
+Obviously, these three interfaces are implemented by the same basic code.
+They are simply three ways of presenting the basic binary search algorithm to users,
+ranging from the simplest ("make simple things simple!")
+to returning complete, but not always needed, information ("don't hide useful information").
+Naturally, crafting such a set of interfaces requires experience and domain knowledge.
+
+##### Note
+
+Do not simply craft the interface to match the first implementation and the first use case you think of.
+Once your first initial implementation is complete, review it; once you deploy it, mistakes will be hard to remedy.
+
+##### Note
+
+A need for efficiency does not imply a need for [low-level code](#Rper-low).
+High-level code does not imply slow or bloated.
+
+##### Note
+
+Things have costs.
+Don't be paranoid about costs (modern computers really are very fast),
+but have a rough idea of the order of magnitude of cost of what you use.
+For example, have a rough idea of the cost of
+a memory access,
+a function call,
+a string comparison,
+a system call,
+a disk access,
+and a message through a network.
+
+##### Note
+
+If you can only think of one implementation, you probably don't have something for which you can devise a stable interface.
+Maybe, it is just an implementation detail - not every piece of code needs a stable interface - but pause and consider.
+One question that can be useful is
+"what interface would be needed if this operation should be implemented using multiple threads? be vectorized?"
+
+##### Note
+
+This rule does not contradict the [Don't optimize prematurely](#Rper-Knuth) rule.
+It complements it encouraging developers enable later - appropriate and non-premature - optimization, if and where needed.
+
+##### Enforcement
+
+Tricky.
+Maybe looking for `void*` function arguments will find examples of interfaces that hinder later optimization.
+
 ### <a name="Rper-type"></a>Per.10: Rely on the static type system
 
 ##### Reason
@@ -10772,7 +11482,7 @@ the same memory. Concurrent programming is tricky for many reasons, most
 importantly that it is undefined behavior to read data in one thread after it
 was written by another thread, if there is no proper synchronization between
 those threads. Making existing single-threaded code execute concurrently can be
-as trivial as adding `std::async` or `std::thread` strategically, or it can 
+as trivial as adding `std::async` or `std::thread` strategically, or it can
 necessitate a full rewrite, depending on whether the original code was written
 in a thread-friendly way.
 
@@ -10852,7 +11562,10 @@ There are several ways that this example could be made safe for a multi-threaded
 * Refuse to build and/or run in a multi-threaded environment.
 * Provide two implementations, one which is used in single-threaded environments and another which is used in multi-threaded environments.
 
-**Exception**: Code that is never run in a multi-threaded environment.
+##### Exception
+
+Code that is never run in a multi-threaded environment.
+
 Be careful: there are many examples where code that was "known" to never run in a multi-threaded program
 was run as part of a multi-threaded program. Often years later.
 Typically, such programs lead to a painful effort to remove data races.
@@ -10957,8 +11670,8 @@ The less sharing you do, the less chance you have to wait on a lock (so performa
 ##### Example
 
     bool validate(const vector<Reading>&);
-    Graph<Temp_node> validate(const vector<Reading>&);
-    Image validate(const vector<Reading>&);
+    Graph<Temp_node> temperature_gradiants(const vector<Reading>&);
+    Image altitude_map(const vector<Reading>&);
     // ...
 
     void process_readings(istream& socket1)
@@ -10968,7 +11681,7 @@ The less sharing you do, the less chance you have to wait on a lock (so performa
         if (!socket1) throw Bad_input{};
 
         auto h1 = async([&] { if (!validate(surface_readings) throw Invalide_data{}; });
-        auto h2 = async([&] { return temparature_gradiants(surface_readings); });
+        auto h2 = async([&] { return temperature_gradiants(surface_readings); });
         auto h3 = async([&] { return altitude_map(surface_readings); });
         // ...
         auto v1 = h1.get();
@@ -11202,7 +11915,7 @@ Maybe it will lock on a different mutex and not return in a reasonable time, cau
 ##### Example
 
 A common example of the "calling unknown code" problem is a call to a function that tries to gain locked access to the same object.
-Such problem cal often be solved by using a `recursive_mutex`. For example:
+Such problem can often be solved by using a `recursive_mutex`. For example:
 
     recursive_mutex my_mutex;
 
@@ -11249,7 +11962,7 @@ If a `thread` joins, we can safely pass pointers to objects in the scope of the 
         auto q = make_unique<int>(99);
         raii_thread t3(f, q.get());      // OK
         // ...
-     }
+    }
 
 An `raii_thread` is a `std::thread` with a destructor that joined and cannot be `detached()`.
 By "OK" we mean that the object will be in scope ("live") for as long as a `thread` can use the pointer to it.
@@ -11294,7 +12007,7 @@ If a `thread` is detached, we can safely pass pointers to static and free store 
         t2.detach();
         t3.detach();
         // ...
-     }
+    }
 
 By "OK" we mean that the object will be in scope ("live") for as long as a `thread` can use the pointers to it.
 By "bad" we mean that a `thread` may use a pointer after the pointed-to object is destroyed.
@@ -11418,7 +12131,7 @@ A `thread` that has not been `detach()`ed when it is destroyed terminates the pr
 
 ##### Enforcement
 
-* Flag `join's for `raii_thread`s ???
+* Flag `join`s for `raii_thread`s ???
 * Flag `detach`s for `detached_thread`s
 
 
@@ -11473,7 +12186,7 @@ Defining "small amount" precisely is impossible.
     }
 
 The call of `modify1` involves copying two `string` values; the call of `modify2` does not.
-On the other hand, the implementation of `modify1` is exactly as we would have written in for single-threaded code,
+On the other hand, the implementation of `modify1` is exactly as we would have written it for single-threaded code,
 whereas the implementation of `modify2` will need some form of locking to avoid data races.
 If the string is short (say 10 characters), the call of `modify1` can be surprisingly fast;
 essentially all the cost is in the `thread` switch. If the string is long (say 1,000,000 characters), copying it twice
@@ -11540,7 +12253,7 @@ Thread creation is expensive.
 
     void master(istream& is)
     {
-       for (Message m; is >> m; )
+        for (Message m; is >> m; )
             run_list.push_back(new thread(worker, m));
     }
 
@@ -11552,14 +12265,14 @@ Instead, we could have a set of pre-created worker threads processing the messag
 
     void master(istream& is)
     {
-       for (Message m; is >> m; )
+        for (Message m; is >> m; )
             work.put(n);
     }
 
     void worker()
     {
         for (Message m; m = work.get(); ) {
-               // process
+            // process
         }
     }
 
@@ -11740,7 +12453,7 @@ It should be obvious to a reader that the data is to be guarded and how.
 
 ## <a name="SScp-par"></a>CP.par: Parallelism
 
-By "parallelism" we refer to a performing a task (more or less) simultaneously ("in parallel with") on many data items.
+By "parallelism" we refer to performing a task (more or less) simultaneously ("in parallel with") on many data items.
 
 Parallelism rule summary:
 
@@ -11753,7 +12466,7 @@ Parallelism rule summary:
 
 ## <a name="SScp-mess"></a>CP.mess: Message passing
 
-The standard-library facilities are quite low level, focused on the needs of close-to the hardware critical programming using `thread`s, `mutex`ex, `atomic` types, etc.
+The standard-library facilities are quite low level, focused on the needs of close-to the hardware critical programming using `thread`s, `mutex`es, `atomic` types, etc.
 Most people shouldn't work at this level: it's error-prone and development is slow.
 If possible, use a higher level facility: messaging libraries, parallel algorithms, and vectorization.
 This section looks at passing messages so that a programmer doesn't have to do explicit synchronization.
@@ -11841,7 +12554,8 @@ Lock-free programming rule summary:
 * how/when to use atomics
 * avoid starvation
 * use a lock free data structure rather than hand-crafting specific lock-free access
-* [CP.110: Use a conventional pattern for double-checked locking](#Rconc-double)
+* [CP.110: Do not write your own double-checked locking for initialization](#Rconc-double)
+* [CP.111: Use a conventional pattern if you really need double-checked locking](#Rconc-double-pattern)
 * how/when to compare and swap
 
 
@@ -11867,7 +12581,9 @@ Spot the bug.
 It would be really hard to find through testing.
 Read up on the ABA problem.
 
-**Exception**: [Atomic variables](#???) can be used simply and safely.
+##### Exception
+
+[Atomic variables](#???) can be used simply and safely.
 
 ##### Note
 
@@ -11916,13 +12632,58 @@ Become an expert before shipping lock-free code for others to use.
 * Damian Dechev, Peter Pirkelbauer, Nicolas Rouquette, and Bjarne Stroustrup: Semantically Enhanced Containers for Concurrent Real-Time Systems. Proc. 16th Annual IEEE International Conference and Workshop on the Engineering of Computer Based Systems (IEEE ECBS). April 2009.
 
 
-### <a name="Rconc-double"></a>CP.110: Use a conventional pattern for double-checked locking
+### <a name="Rconc-double"></a>CP.110: Do not write your own double-checked locking for initialization
 
 ##### Reason
 
-Double-checked locking is easy to mess up.
+Since C++11, static local variables are now initialized in a thread-safe way. When combined with the RAII pattern, static local variables can replace the need for writing your own double-checked locking for initialization. std::call_once can also achieve the same purpose. Use either static local variables of C++11 or std::call_once instead of writing your own double-checked locking for initialization.
 
 ##### Example
+
+Example with std::call_once.
+
+    void f()
+    {
+        static std::once_flag my_once_flag;
+        std::call_once(my_once_flag, []()
+        {
+            // do this only once
+        });
+        // ...
+    }
+
+Example with thread-safe static local variables of C++11.
+
+    void f()
+    {
+        // Assuming the compiler is compliant with C++11
+        static My_class my_object; // Constructor called only once
+        // ...
+    }
+    
+    class My_class
+    {
+    public:
+        My_class()
+        {
+            // ...
+        }
+    };
+
+##### Enforcement
+
+??? Is it possible to detect the idiom?
+
+
+### <a name="Rconc-double-pattern"></a>CP.111: Use a conventional pattern if you really need double-checked locking
+
+##### Reason
+
+Double-checked locking is easy to mess up. If you really need to write your own double-checked locking, in spite of the rules [CP.110: Do not write your own double-checked locking for initialization](#Rconc-double) and [CP.100: Don't use lock-free programming unless you absolutely have to](#Rconc-lockfree), then do it in a conventional pattern.
+
+##### Example, bad
+
+Even if the following example works correctly on most hardware platforms, it is not guaranteed to work by the C++ standard. The x_init.load(memory_order_relaxed) call may see a value from outside of the lock guard. 
 
     atomic<bool> x_init;
 
@@ -11934,8 +12695,28 @@ Double-checked locking is easy to mess up.
         }
     }
 
-    // ... use x ...
+##### Example, good
 
+One of the conventional patterns is below.
+
+    std::atomic<int> state;
+    
+    // If state == SOME_ACTION_NEEDED maybe an action is needed, maybe not, we need to
+    // check again in a lock. However, if state != SOME_ACTION_NEEDED, then we can be
+    // sure that an action is not needed. This is the basic assumption of double-checked
+    // locking.
+    
+    if (state == SOME_ACTION_NEEDED)
+    {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (state == SOME_ACTION_NEEDED)
+        {
+            // do something
+            state = NO_ACTION_NEEDED;
+        }
+    }
+
+In the example above (state == SOME_ACTION_NEEDED) could be any condition. It doesn't necessarily needs to be equality comparison. For example, it could as well be (size > MIN_SIZE_TO_TAKE_ACTION).
 
 ##### Enforcement
 
@@ -12082,7 +12863,7 @@ To make error handling systematic, robust, and non-repetitive.
 
     void use()
     {
-        Foo bar {{ "{{" }}Thing{1}, Thing{2}, Thing{monkey}}, {"my_file", "r"}, "Here we go!"};
+        Foo bar {{Thing{1}, Thing{2}, Thing{monkey}}, {"my_file", "r"}, "Here we go!"};
         // ...
     }
 
@@ -12119,7 +12900,9 @@ Unless the loop was meant to be infinite, termination is normal and expected.
 
 Don't use a `throw` as simply an alternative way of returning a value from a function.
 
-**Exception**: Some systems, such as hard-real time systems require a guarantee that an action is taken in a (typically short) constant maximum time known before execution starts. Such systems can use exceptions only if there is tool support for accurately predicting the maximum time to recover from a `throw`.
+##### Exception
+
+Some systems, such as hard-real time systems require a guarantee that an action is taken in a (typically short) constant maximum time known before execution starts. Such systems can use exceptions only if there is tool support for accurately predicting the maximum time to recover from a `throw`.
 
 **See also**: [RAII](#Re-raii)
 
@@ -12187,7 +12970,7 @@ Not all member functions can be called.
         // if elem != nullptr then elem points to sz doubles
     public:
         Vector() : elem{nullptr}, sz{0}{}
-        vector(int s) : elem{new double}, sz{s} { /* initialize elements */ }
+        Vector(int s) : elem{new double}, sz{s} { /* initialize elements */ }
         ~Vector() { delete elem; }
         double& operator[](int s) { return elem[s]; }
         // ...
@@ -12633,12 +13416,12 @@ Better:
 `finally` is not as messy as `try`/`catch`, but it is still ad-hoc.
 Prefer [proper resource management objects](#Re-raii).
 
-###### Note
+##### Note
 
 Use of `finally` is a systematic and reasonably clean alternative to the old [`goto exit;` technique](##Re-no-throw-codes)
 for dealing with cleanup where resource management is not systematic.
 
-###### Enforcement
+##### Enforcement
 
 Heuristic: Detect `goto exit;`
 
@@ -12703,7 +13486,7 @@ The problem is of course that the caller now have to remember to test the return
 
 Possible (only) for specific versions of this idea: e.g., test for systematic test of `valid()` after resource handle construction
 
-## <a name="Re-no-throw-crash"></a>E.26: If you can't throw exceptions, consider failing fast
+### <a name="Re-no-throw-crash"></a>E.26: If you can't throw exceptions, consider failing fast
 
 ##### Reason
 
@@ -12725,20 +13508,20 @@ In such cases, "crashing" is simply leaving error handling to the next level of 
 
     void f(int n)
     {
-           // ...
-           p = static_cast<X*>(malloc(n, X));
-           if (p == nullptr) abort();     // abort if memory is exhausted
-           // ...
-     }
+        // ...
+        p = static_cast<X*>(malloc(n, X));
+        if (p == nullptr) abort();     // abort if memory is exhausted
+        // ...
+    }
 
 Most programs cannot handle memory exhaustion gracefully anyway. This is roughly equivalent to
 
     void f(int n)
     {
-           // ...
-           p = new X[n];    // throw if memory is exhausted (by default, terminate)
-           // ...
-     }
+        // ...
+        p = new X[n];    // throw if memory is exhausted (by default, terminate)
+        // ...
+    }
 
 Typically, it is a good idea to log the reason for the "crash" before exiting.
 
@@ -12746,7 +13529,7 @@ Typically, it is a good idea to log the reason for the "crash" before exiting.
 
 Awkward
 
-## <a name="Re-no-throw-codes"></a>E.27: If you can't throw exceptions, use error codes systematically
+### <a name="Re-no-throw-codes"></a>E.27: If you can't throw exceptions, use error codes systematically
 
 ##### Reason
 
@@ -12868,7 +13651,7 @@ A not uncommon technique is to gather cleanup at the end of the function to avoi
 
         Gadget g1 = make_gadget(17);
         if (!g1.valid()) {
-                err = g2_error;
+                err = g1_error;
                 goto exit;
         }
 
@@ -12886,7 +13669,7 @@ A not uncommon technique is to gather cleanup at the end of the function to avoi
 
     exit:
       if (g1.valid()) cleanup(g1);
-      if (g1.valid()) cleanup(g2);
+      if (g2.valid()) cleanup(g2);
       return {res, err};
     }
 
@@ -12904,7 +13687,7 @@ We [prefer exception-based error handling](#Re-throw) and recommend [keeping fun
 
 Awkward.
 
-## <a name="Re-no-throw"></a>E.28: Avoid error handling based on global state (e.g. `errno`)
+### <a name="Re-no-throw"></a>E.28: Avoid error handling based on global state (e.g. `errno`)
 
 ##### Reason
 
@@ -13187,17 +13970,17 @@ Generality. Re-use. Efficiency. Encourages consistent definition of user types.
 
 Conceptually, the following requirements are wrong because what we want of `T` is more than just the very low-level concepts of "can be incremented" or "can be added":
 
-    template<typename T, typename A>
+    template<typename T>
         // requires Incrementable<T>
-    A sum1(vector<T>& v, A s)
+    T sum1(vector<T>& v, T s)
     {
         for (auto x : v) s += x;
         return s;
     }
 
-    template<typename T, typename A>
+    template<typename T>
         // requires Simple_number<T>
-    A sum2(vector<T>& v, A s)
+    T sum2(vector<T>& v, T s)
     {
         for (auto x : v) s = s + x;
         return s;
@@ -13208,9 +13991,9 @@ And, in this case, missed an opportunity for a generalization.
 
 ##### Example
 
-    template<typename T, typename A>
+    template<typename T>
         // requires Arithmetic<T>
-    A sum(vector<T>& v, A s)
+    T sum(vector<T>& v, T s)
     {
         for (auto x : v) s += x;
         return s;
@@ -13302,7 +14085,7 @@ It also avoids brittle or inefficient workarounds. Convention: That's the way th
     };
 
     Container c(10, sizeof(double));
-    ((double*)c.elem)[] = 9.9;
+    ((double*) c.elem)[] = 9.9;
 
 This doesn't directly express the intent of the programmer and hides the structure of the program from the type system and optimizer.
 
@@ -14138,7 +14921,7 @@ Note that C++17 will make this rule redundant by allowing the template arguments
 [Template parameter deduction for constructors (Rev. 3)](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0091r1.html).
 For example:
 
-    tuple t1 = {1, "Hamlet", 3.14}; // deduced: tuple<int, string, double>
+    tuple t1 = {1, "Hamlet"s, 3.14}; // deduced: tuple<int, string, double>
 
 ##### Enforcement
 
@@ -14203,7 +14986,7 @@ Semiregular requires default constructible.
             vector<int> v(10);
             bool b = 1 == bad;
             bool b2 = v.size() == bad;
-       }
+        }
     }
 
 This prints `T0` and `Bad`.
@@ -14347,7 +15130,7 @@ This limits use and typically increases code size.
     };
 
     List<int> lst1;
-    List<int, my_allocator> lst2;
+    List<int, My_allocator> lst2;
 
     ???
 
@@ -14374,7 +15157,7 @@ This looks innocent enough, but ???
     };
 
     List<int> lst1;
-    List<int, my_allocator> lst2;
+    List<int, My_allocator> lst2;
 
     ???
 
@@ -14457,11 +15240,11 @@ Specialization offers a powerful mechanism for providing alternative implementat
 This is a simplified version of `std::copy` (ignoring the possibility of non-contiguous sequences)
 
     struct pod_tag {};
-    struct non_pod_tag;
+    struct non_pod_tag {};
 
     template<class T> struct copy_trait { using tag = non_pod_tag; };   // T is not "plain old data"
 
-    template<> struct copy_trait<int> { using tab = pod_tag; };         // int is "plain old data"
+    template<> struct copy_trait<int> { using tag = pod_tag; };         // int is "plain old data"
 
     template<class Iter>
     Out copy_helper(Iter first, Iter last, Iter out, pod_tag)
@@ -14494,7 +15277,7 @@ This is a general and powerful technique for compile-time algorithm selection.
 When `concept`s become widely available such alternatives can be distinguished directly:
 
     template<class Iter>
-        requires Pod<Value_type_iter>
+        requires Pod<Value_type<iter>>
     Out copy_helper(In, first, In last, Out out)
     {
         // use memmove
@@ -14560,27 +15343,27 @@ When `concept`s become widely available such alternatives can be distinguished d
 
 There are three major ways to let calling code customize a template.
 
-        template<class T>
-            // Call a member function
-        void test1(T t)
-        {
-            t.f();    // require T to provide f()
-        }
+    template<class T>
+        // Call a member function
+    void test1(T t)
+    {
+        t.f();    // require T to provide f()
+    }
 
-        template<class T>
-        void test2(T t)
-            // Call a nonmember function without qualification
-        {
-            f(t);  // require f(/*T*/) be available in caller's scope or in T's namespace
-        }
+    template<class T>
+    void test2(T t)
+        // Call a nonmember function without qualification
+    {
+        f(t);  // require f(/*T*/) be available in caller's scope or in T's namespace
+    }
 
-        template<class T>
-        void test3(T t)
-            // Invoke a "trait"
-        {
-            test_traits<T>::f(t); // require customizing test_traits<>
-                                  // to get non-default functions/types
-        }
+    template<class T>
+    void test3(T t)
+        // Invoke a "trait"
+    {
+        test_traits<T>::f(t); // require customizing test_traits<>
+                              // to get non-default functions/types
+    }
 
 A trait is usually a type alias to compute a type,
 a `constexpr` function to compute a value,
@@ -14803,7 +15586,7 @@ Variadic templates is the most general mechanism for that, and is both efficient
 
 ##### Enforcement
 
-    * Flag uses of `va_arg` in user code.
+* Flag uses of `va_arg` in user code.
 
 ### <a name="Rt-variadic-pass"></a>T.101: ??? How to pass arguments to a variadic template ???
 
@@ -14957,7 +15740,7 @@ Often a `constexpr` function implies less compile-time overhead than alternative
 
 ##### Enforcement
 
-    * Flag template metaprograms yielding a value. These should be replaced with `constexpr` functions.
+* Flag template metaprograms yielding a value. These should be replaced with `constexpr` functions.
 
 ### <a name="Rt-std-tmp"></a>T.124: Prefer to use standard-library TMP facilities
 
@@ -15107,7 +15890,7 @@ Use `!=` instead of `<` to compare iterators; `!=` works for more objects becaus
         // ...
     }
 
-Of course, range-for is better still where it does what you want.
+Of course, range-`for` is better still where it does what you want.
 
 ##### Example
 
@@ -15115,18 +15898,18 @@ Use the least-derived class that has the functionality you need.
 
     class Base {
     public:
-        void f();
-        void g();
+        Bar f();
+        Bar g();
     };
 
     class Derived1 : public Base {
     public:
-        void h();
+        Bar h();
     };
 
     class Derived2 : public Base {
     public:
-        void j();
+        Bar j();
     };
 
     // bad, unless there is a specific reason for limiting to Derived1 objects only
@@ -15236,7 +16019,7 @@ That subset can be compiled with both C and C++ compilers, and when compiled as 
     int* p1 = malloc(10 * sizeof(int));                      // not C++
     int* p2 = static_cast<int*>(malloc(10 * sizeof(int)));   // not C, C-style C++
     int* p3 = new int[10];                                   // not C
-    int* p4 = (int*)malloc(10 * sizeof(int));                // both C and C++
+    int* p4 = (int*) malloc(10 * sizeof(int));               // both C and C++
 
 ##### Enforcement
 
@@ -15309,14 +16092,23 @@ Source file rule summary:
 
 ##### Reason
 
-It's a longstanding convention. But consistency is more important, so if your project uses something else, follow that.
+It's a longstanding convention.
+But consistency is more important, so if your project uses something else, follow that.
 
 ##### Note
 
-This convention reflects a common use pattern: Headers are more often shared with C to compile as both C++ and C, which typically uses `.h`, and it's easier to name all headers `.h` instead of having different extensions for just those headers that are intended to be shared with C. On the other hand, implementation files are rarely shared with C and so should typically be distinguished from `.c` files, so it's normally best to name all C++ implementation files something else (such as `.cpp`).
+This convention reflects a common use pattern:
+Headers are more often shared with C to compile as both C++ and C, which typically uses `.h`,
+and it's easier to name all headers `.h` instead of having different extensions for just those headers that are intended to be shared with C.
+On the other hand, implementation files are rarely shared with C and so should typically be distinguished from `.c` files,
+so it's normally best to name all C++ implementation files something else (such as `.cpp`).
 
 The specific names `.h` and `.cpp` are not required (just recommended as a default) and other names are in widespread use.
-Examples are `.hh` and `.cxx`. Use such names equivalently. In this document we refer to `.h` and `.cpp` as a shorthand for header and implementation files, even though the actual extension may be different.
+Examples are `.hh`, `.C`, and `.cxx`. Use such names equivalently.
+In this document, we refer to `.h` and `.cpp` as a shorthand for header and implementation files,
+even though the actual extension may be different.
+
+Your IDE (if you use one) may have strong opinions about suffices.
 
 ##### Example
 
@@ -15351,7 +16143,21 @@ Including entities subject to the one-definition rule leads to linkage errors.
 
 ##### Example
 
-    ???
+    // file.h:
+    namespace Foo {
+        int x = 7;
+        int xx() { return x+x; }
+    }
+
+    // file1.cpp:
+    #include<file.h>
+    // ... more ...
+
+     // file2.cpp:
+    #include<file.h>
+    // ... more ...
+
+Linking `file1.cpp` and `file2.cpp` will give two linker errors.
 
 **Alternative formulation**: A `.h` file must contain only:
 
@@ -15445,7 +16251,7 @@ This enables the compiler to do an early consistency check.
 
     // foo.h:
     void foo(int);
-    int bar(long double);
+    int bar(long);
     int foobar(int);
 
     // foo.cpp:
@@ -15459,7 +16265,7 @@ The errors will not be caught until link time for a program calling `bar` or `fo
 
     // foo.h:
     void foo(int);
-    int bar(long double);
+    int bar(long);
     int foobar(int);
 
     // foo.cpp:
@@ -15731,7 +16537,7 @@ This slowdown can be significant compared to `printf`-style output.
 ##### Example
 
     cout << "Hello, World!" << endl;    // two output operations and a flush
-    cout << "hello, World!\n";          // one output operation and no flush
+    cout << "Hello, World!\n";          // one output operation and no flush
 
 ##### Note
 
@@ -15762,14 +16568,14 @@ C standard library rule summary:
 * [???](#???)
 
 
-# <a name="S-A"></a>A: Architectural Ideas
+# <a name="S-A"></a>A(Architectural Ideas): 구조적 아이디어
 
-This section contains ideas about higher-level architectural ideas and libraries.
+이 절은 보다 고수준의 구조적 아이디어와 라이브러리에 대한 아이디어를 포함한다.
 
-Architectural rule summary:
+구조적 아이디어 규칙 요약:
 
-* [A.1 Separate stable from less stable part of code](#Ra-stable)
-* [A.2 Express potentially reusable parts as a library](#Ra-lib)
+* [A.1 코드의 덜 안정적인 부분에서 안정적인 부분을 분리하라](#Ra-stable)
+* [A.2 잠재적으로 재사용 가능한 부분을 라이브러리로 표현하라](#Ra-lib)
 * [A.4 There should be no cycles among libraries](#?Ra-dag)
 * [???](#???)
 * [???](#???)
@@ -15778,20 +16584,19 @@ Architectural rule summary:
 * [???](#???)
 * [???](#???)
 
-### <a name="Ra-stable"></a>A.1 Separate stable from less stable part of code
+### <a name="Ra-stable"></a>A.1 코드의 덜 안정적인 부분에서 안정적인 부분을 분리하라
 
 ???
 
-### <a name="Ra-lib"></a>A.2 Express potentially reusable parts as a library
+### <a name="Ra-lib"></a>A.2 잠재적으로 재사용 가능한 부분을 라이브러리로 표현하라
 
-##### Reason
+##### 이유
 
-##### Note
+##### 비고
 
 A library is a collection of declarations and definitions maintained, documented, and shipped together.
 A library could be a set of headers (a "header only library") or a set of headers plus a set of object files.
 A library can be statically or dynamically linked into a program, or it may be `#included`
-
 
 ### <a name="Ra-dag"></a>A.4 There should be no cycles among libraries
 
@@ -15802,42 +16607,274 @@ A library can be statically or dynamically linked into a program, or it may be `
 
 ##### Note
 
-A library can contain cyclic references in the definition of its components. For example:
+A library can contain cyclic references in the definition of its components.
+For example:
 
     ???
 
 However, a library should not depend on another that depends on it.
 
 
-# <a name="S-not"></a>NR: Non-Rules and myths
+# <a name="S-not"></a>NR(Non-Rules and myths): 규칙이 아닌 미신
 
-This section contains rules and guidelines that are popular somewhere, but that we deliberately don't recommend.
-In the context of the styles of programming we recommend and support with the guidelines, these "non-rules" would do harm.
+이 절은 어디선가 인기있는 규칙과 가이드라인을 포함한다. 하지만 우리는 이러한 규칙과 가이드라인을 의도적으로 추천하지는 않는다.
+We know full well that there have been times and places where these rules made sense, and we have used them ourselves at times.
+그러나, 가이드라인에서 추천하고 지원하는 프로그래밍 스타일의 맥락에서 "규칙이 아닌 미신"은 여러분에게 해를 입힐 수 있따.
 
-Non-rule summary:
+Even today, there can be contexts where the rules make sense.
+For example, lack of suitable tool support can make exceptions unsuitable in hard-real-time systems,
+but please don't blindly trust "common wisdom" (e.g., unsupported statements about "efficiency");
+such "wisdom" may be based on decades-old information or experienced from languages with very different properties than C++
+(e.g., C or Java).
 
-* [NR.1: All declarations should be at the top of a function](#Rnr-top)
-* single-return rule
-* no exceptions
-* one class per source file
-* two-phase initialization
-* goto exit
-* make all data members `protected`
+The positive arguments for alternatives to these non-rules are listed in the rules offered as "Alternatives".
+
+규칙이 아닌 미신 요약:
+
+* [NR.1: Don't: All declarations should be at the top of a function](#Rnr-top)
+* [NR.2: Don't: Have only a single single `return`-statement in a function](#Rnr-single-return)
+* [NR.3: Don't: Don't use exceptions](#Rnr-no-exceptions)
+* [NR.4: Don't: Place each class declaration in its own source file](#Rnr-lots-of-files)
+* [NR.5: Don't: Don't do substantive work in a constructor; instead use two-phase initialization](#Rnr-two-phase-init)
+* [NR.6: Don't: Place all cleanup actions at the end of a function and `goto exit`](#Rnr-goto-exit)
+* [NR.7: Don't: Make all data members `protected`](#Rnr-protected-data)
 * ???
 
-### <a name="Rnr-top"></a>NR.1: All declarations should be at the top of a function
+### <a name="Rnr-top"></a>NR.1: Don't: All declarations should be at the top of a function
 
-##### Reason
+##### Reason (not to follow this rule)
 
 This rule is a legacy of old programming languages that didn't allow initialization of variables and constants after a statement.
 This leads to longer programs and more errors caused by uninitialized and wrongly initialized variables.
 
-##### Alternative
+##### Example, bad
 
-Instead:
+    ???
+
+The larger the distance between the uninitialized variable and its use, the larger the chance of a bug.
+Fortunately, compilers catch many "used before set" errors.
+
+
+##### Alternative
 
 * [Always initialize an object](#Res-always)
 * [ES.21: Don't introduce a variable (or constant) before you need to use it](#Res-introduce)
+
+### <a name="Rnr-single-return"></a>NR.2: Don't: Have only a single single `return`-statement in a function
+
+##### Reason (not to follow this rule)
+
+The single-return rule can lead to unnecessarily convoluted code and the introduction of extra state variables.
+In particular, the single-return rule makes it harder to concentrate error checking at the top of a function.
+
+##### Example
+
+    template<class T>
+    //  requires Number<T>
+    string sign(T x)
+    {
+        if (x < 0)
+            return "negative";
+        else if (x > 0)
+            return "positive";
+        return "zero";
+    }
+
+to use a single return only we would have to do something like
+
+    template<class T>
+    //  requires Number<T>
+    string sign(T x)        // bad
+    {
+        string res;
+        if (x < 0)
+            res = "negative";
+        else if (x > 0)
+            res = "positive";
+        else
+            res = "zero";
+        return res;
+    }
+
+This is both longer and likely to be less efficient.
+The larger and more complicated the function is, the more painful the workarounds get.
+Of course many simple functions will naturally have just one `return` because of their simpler inherent logic.
+
+##### Example
+
+    int index(const char* p)
+    {
+        if (p == nullptr) return -1;  // error indicator: alternatively "throw nullptr_error{}"
+        // ... do a lookup to find the index for p
+        return i;
+    }
+
+If we applied the rule, we'd get something like
+
+    int index2(const char* p)
+    {
+        int i;
+        if (p == nullptr)
+            i = -1;  // error indicator
+        else {
+            // ... do a lookup to find the index for p
+        }
+        return i;
+    }
+
+Note that we (deliberately) violated the rule against uninitialized variables because this style commonly leads to that.
+Also, this style is a temptation to use the [goto exit](#Rnr-goto-exit) non-rule.
+
+##### Alternative
+
+* Keep functions short and simple
+* Feel free to use multiple `return` statements (and to throw exceptions).
+
+### <a name="Rnr-no-exceptions"></a>NR.3: Don't: Don't use exceptions
+
+##### Reason (not to follow this rule)
+
+There seem to be three main reasons given for this non-rule:
+
+* exceptions are inefficient
+* exceptions lead to leaks and errors
+* exception performance is not predictable
+
+There is no way we can settle this issue to the satisfaction of everybody.
+After all, the discussions about exceptions have been going on for 40+ years.
+Some languages cannot be used without exceptions, but others do not support them.
+This leads to strong traditions for the use and non-use of exceptions, and to heated debates.
+
+However, we can briefly outline why we consider exceptions the best alternative for general-purpose programming
+and in the context of these guidelines.
+Simple arguments for and against are often inconclusive.
+There are specialized applications where exceptions indeed can be inappropriate
+(e.g., hard-real time systems without support for reliable estimates of the cost of handling an exception).
+
+Consider the major objections to exceptions in turn
+
+* Exceptions are inefficient:
+Compared to what?
+When comparing make sure that the same set of errors are handled and that they are handled equivalently.
+In particular, do not compare a program that immediately terminate on seeing an error with a program
+that carefully cleans up resources before logging an error.
+Yes, some systems have poor exception handling implementations; sometimes, such implementations force us to use
+other error-handling approaches, but that's not a fundamental problem with exceptions.
+When using an efficiency argument - in any context - be careful that you have good data that actually provides
+insight into the problem under discussion.
+* Exceptions lead to leaks and errors.
+They do not.
+If your program is a rat's nest of pointers without an overall strategy for resource management,
+you have a problem whatever you do.
+If your system consists of a million lines of such code,
+you probably will not be able to use exceptions,
+but that's a problem with excessive and undisciplined pointer use, rather than with exceptions.
+In our opinion, you need RAII to make exception-based error handling simple and safe -- simpler and safer than alternatives.
+* Exception performance is not predictable
+If you are in a hard-real-time system where you must guarantee completion of a task in a given time,
+you need tools to back up such guarantees.
+As far as we know such tools are not available (at least not to most programmers).
+
+Many, possibly most, problems with exceptions stem from historical needs to interact with messy old code.
+
+The fundamental arguments for the use of exceptions are
+
+* They clearly separates error return from ordinary return
+* They cannot be forgotten or ignored
+* They can be used systematically
+
+Remember
+
+* Exceptions are for reporting errors (in C++; other languages can have different uses for exceptions).
+* Exceptions are not for errors that can be handled locally.
+* Don't try to catch every exception in every function (that's tedious, clumsy, and leads to slow code).
+* Exceptions are not for errors that require instant termination of a module/system after a non-recoverable error.
+
+##### Example
+
+    ???
+
+##### Alternative
+
+* [RAII](#Re-raii)
+* Contracts/assertions: Use GSL's `Expects` and `Ensures` (until we get language support for contracts)
+
+### <a name="Rnr-lots-of-files"></a>NR.4: Don't: Place each class declaration in its own source file
+
+##### Reason (not to follow this rule)
+
+The resulting number of files are hard to manage and can slow down compilation.
+Individual classes are rarely a good logical unit of maintenance and distribution.
+
+##### Example
+
+    ???
+
+##### Alternative
+
+* Use namespaces containing logically cohesive sets of classes and functions.
+
+### <a name="Rnr-two-phase-init"></a>NR.5: Don't: Don't do substantive work in a constructor; instead use two-phase initialization
+
+##### Reason (not to follow this rule)
+
+Following this rule leads to weaker invariants,
+more complicated code (having to deal with semi-constructed objects),
+and errors (when we didn't deal correctly with semi-constructed objects consistently).
+
+##### Example
+
+    ???
+
+##### Alternative
+
+* Always establish a class invariant in a constructor.
+* Don't define an object before it is needed.
+
+### <a name="Rnr-goto-exit"></a>NR.6: Don't: Place all cleanup actions at the end of a function and `goto exit`
+
+##### Reason (not to follow this rule)
+
+`goto` is error-prone.
+This technique is a pre-exception technique for RAII-like resource and error handling.
+
+##### Example, bad
+
+    void do_something(int n)
+    {
+        if (n < 100) goto exit;
+        // ...
+        int* p = (int*) malloc(n);
+        // ...
+        if (some_ error) goto_exit;
+        // ...
+    exit:
+        free(p);
+    }
+
+and spot the bug.
+
+##### Alternative
+
+* Use exceptions and [RAII](#Re-raii)
+* for non-RAII resources, use [`finally`](#Re-finally).
+
+### <a name="Rnr-protected-data"></a>NR.7: Don't: Make all data members `protected`
+
+##### Reason (not to follow this rule)
+
+`protected` data is a source of errors.
+`protected` data can be manipulated from an unbounded amount of code in various places.
+`protected` data is the class hierarchy equivalent to global data.
+
+##### Example
+
+    ???
+
+##### Alternative
+
+* [Make member data `public` or (preferably) `private`](#Rh-protected)
+
 
 # <a name="S-references"></a>RF: References
 
@@ -16009,10 +17046,10 @@ Candidates include:
 
 To suppress enforcement of a profile check, place a `suppress` annotation on a language contract. For example:
 
-     [[suppress(bounds)]] char* raw_find(char* p, int n, char x)    // find x in p[0]..p[n-1]
-     {
-         // ...
-     }
+    [[suppress(bounds)]] char* raw_find(char* p, int n, char x)    // find x in p[0]..p[n-1]
+    {
+        // ...
+    }
 
 Now `raw_find()` can scramble memory to its heart's content.
 Obviously, suppression should be very rare.
@@ -16072,10 +17109,10 @@ Use of these casts can violate type safety and cause the program to access a var
     };
 
     Derived1 d1;
-    Base* p = &d1; // ok, implicit conversion to pointer to Base is fine
+    Base* p1 = &d1; // ok, implicit conversion to pointer to Base is fine
 
     // BAD, tries to treat d1 as a Derived2, which it is not
-    Derived2* p2 = static_cast<Derived2*>(p);
+    Derived2* p2 = static_cast<Derived2*>(p1);
     // tries to access d1's nonexistent string member, instead sees arbitrary bytes near d1
     cout << p2->get_s();
 
@@ -16133,7 +17170,6 @@ Sometimes you may be tempted to resort to `const_cast` to avoid code duplication
     class Bar;
 
     class Foo {
-        Bar my_bar;
     public:
         // BAD, duplicates logic
         Bar& get_bar() {
@@ -16143,12 +17179,13 @@ Sometimes you may be tempted to resort to `const_cast` to avoid code duplication
         const Bar& get_bar() const {
             /* same complex logic around getting a const reference to my_bar */
         }
+    private:
+        Bar my_bar;
     };
 
 Instead, prefer to share implementations. Normally, you can just have the non-`const` function call the `const` function. However, when there is complex logic this can lead to the following pattern that still resorts to a `const_cast`:
 
     class Foo {
-        Bar my_bar;
     public:
         // not great, non-const calls const version but resorts to const_cast
         Bar& get_bar() {
@@ -16157,6 +17194,8 @@ Instead, prefer to share implementations. Normally, you can just have the non-`c
         const Bar& get_bar() const {
             /* the complex logic around getting a const reference to my_bar */
         }
+    private:
+        Bar my_bar;
     };
 
 Although this pattern is safe when applied correctly, because the caller must have had a non-`const` object to begin with, it's not ideal because the safety is hard to enforce automatically as a checker rule.
@@ -16164,18 +17203,20 @@ Although this pattern is safe when applied correctly, because the caller must ha
 Instead, prefer to put the common code in a common helper function -- and make it a template so that it deduces `const`. This doesn't use any `const_cast` at all:
 
     class Foo {
+    public:                         // good
+              Bar& get_bar()       { return get_bar_impl(*this); }
+        const Bar& get_bar() const { return get_bar_impl(*this); }
+    private:
         Bar my_bar;
 
         template<class T>           // good, deduces whether T is const or non-const
         static auto get_bar_impl(T& t) -> decltype(t.get_bar())
             { /* the complex logic around getting a possibly-const reference to my_bar */ }
-
-    public:                         // good
-              Bar& get_bar()       { return get_bar_impl(*this); }
-        const Bar& get_bar() const { return get_bar_impl(*this); }
     };
 
-**Exception**: You may need to cast away `const` when calling `const`-incorrect functions. Prefer to wrap such functions in inline `const`-correct wrappers to encapsulate the cast in one place.
+##### Exception
+
+You may need to cast away `const` when calling `const`-incorrect functions. Prefer to wrap such functions in inline `const`-correct wrappers to encapsulate the cast in one place.
 
 ##### Enforcement
 
@@ -16207,7 +17248,7 @@ Note that a C-style `(T)expression` cast means to perform the first of the follo
     Base* p1 = &d1; // ok, implicit conversion to pointer to Base is fine
 
     // BAD, tries to treat d1 as a Derived2, which it is not
-    Derived2* p2 = (Derived2*)(p);
+    Derived2* p2 = (Derived2*)(p1);
     // tries to access d1's nonexistent string member, instead sees arbitrary bytes near d1
     cout << p2->get_s();
 
@@ -16394,14 +17435,14 @@ Dynamic accesses into arrays are difficult for both tools and humans to validate
     // ALTERNATIVE A: Use a span
 
     // A1: Change parameter type to use span
-    void f(span<int, 10> a, int pos)
+    void f1(span<int, 10> a, int pos)
     {
         a[pos / 2] = 1; // OK
         a[pos - 1] = 2; // OK
     }
 
     // A2: Add local span and use that
-    void f(array<int, 10> arr, int pos)
+    void f2(array<int, 10> arr, int pos)
     {
         span<int> a = {arr, pos}
         a[pos / 2] = 1; // OK
@@ -16409,7 +17450,7 @@ Dynamic accesses into arrays are difficult for both tools and humans to validate
     }
 
     // ALTERNATIVE B: Use at() for access
-    void f(array<int, 10> a, int pos)
+    void f3(array<int, 10> a, int pos)
     {
         at(a, pos / 2) = 1; // OK
         at(a, pos - 1) = 2; // OK
@@ -16536,7 +17577,7 @@ If code is using an unmodified standard library, then there are still workaround
         at(v, 0) = a[0];    // OK (alternative 2)
 
         v.at(0) = a[i];     // BAD
-        v.at(0) = a.at(i)   // OK (alternative 1)
+        v.at(0) = a.at(i);  // OK (alternative 1)
         v.at(0) = at(a, i); // OK (alternative 2)
     }
 
@@ -16571,7 +17612,7 @@ Eventually, use [the one voted into C++17](http://www.open-std.org/jtc1/sc22/wg2
 Summary of GSL components:
 
 * [GSL.view: Views](#SS-views)
-* [GSL.owner](#Ownership pointers)
+* [GSL.owner](#SS-ownership)
 * [GSL.assert: Assertions](#SS-assertions)
 * [GSL.util: Utilities](#SS-utilities)
 * [GSL.concept: Concepts](#SS-gsl-concepts)
@@ -16625,8 +17666,8 @@ A `span<T>` refers to zero or more mutable `T`s unless `T` is a `const` type.
 "Pointer arithmetic" is best done within `span`s.
 A `char*` that points to more than one `char` but is not a C-style string (e.g., a pointer into an input buffer) should be represented by a `span`.
 
-* `zstring`    // a `char*` supposed to be a C-style string; that is, a zero-terminated sequence of `char` or `null_ptr`
-* `czstring`   // a `const char*` supposed to be a C-style string; that is, a zero-terminated sequence of `const` `char` or `null_ptr`
+* `zstring`    // a `char*` supposed to be a C-style string; that is, a zero-terminated sequence of `char` or `nullptr`
+* `czstring`   // a `const char*` supposed to be a C-style string; that is, a zero-terminated sequence of `const` `char` or `nullptr`
 
 Logically, those last two aliases are not needed, but we are not always logical, and they make the distinction between a pointer to one `char` and a pointer to a C-style string explicit.
 A sequence of characters that is not assumed to be zero-terminated should be a `char*`, rather than a `zstring`.
@@ -16726,7 +17767,7 @@ Naming and layout rules:
 * [NL.20: Don't place two statements on the same line](#Rl-stmt)
 * [NL.21: Declare one name (only) per declaration](#Rl-dcl)
 * [NL.25: Don't use `void` as an argument type](#Rl-void)
-* [NL.26: Use conventional `const` notation](Rl-const)
+* [NL.26: Use conventional `const` notation](#Rl-const)
 
 Most of these rules are aesthetic and programmers hold strong opinions.
 IDEs also tend to have defaults and a range of alternatives.
@@ -16876,7 +17917,7 @@ This is not evil.
 
 ##### Example
 
-    sqrt double(double x);   // return the square root of x; x must be non-negative
+    double sqrt(double x);   // return the square root of x; x must be non-negative
 
     int length(const char* p);  // return the number of characters in a zero-terminated C-style string
 
@@ -17110,7 +18151,7 @@ In the context of C++, this style is often called "Stroustrup".
         return some_value;
     }
 
-**Note** a space between `if` and `(`
+Note the space between `if` and `(`
 
 ##### Note
 
@@ -17342,11 +18383,11 @@ No. It is a placeholder for language support for contract preconditions.
 
 No. It is a placeholder for language support for contract postconditions.
 
-# <a name="S-libraries"></a>Appendix A: Libraries
+# <a name="S-libraries"></a>부록 A: 라이브러리
 
-This section lists recommended libraries, and explicitly recommends a few.
+이 절에서는 추천할만한 라이브러리를 나열하고 명시적으로 몇 가지 라이브러리를 추천하고자 한다.
 
-??? Suitable for the general guide? I think not ???
+??? 일반적인 가이드로 적합할까? 나는 그렇게 생각하지 않는다 ???
 
 # <a name="S-modernizing"></a>Appendix B: Modernizing code
 
@@ -17894,7 +18935,7 @@ To simplify code and eliminate a need for explicit memory management. To bring a
 
     auto v = get_large_vector(); //  return by value is ok, most modern compilers will do copy elision
 
-##### Exceptions
+##### Exception
 
 See the Exceptions in [F.20](#Rf-out).
 
@@ -17937,11 +18978,11 @@ It is common to need an initial set of elements.
 
     template<typename T> class Vector {
     public:
-        vector<std::initializer_list<T>>;
+        Vector(std::initializer_list<T>);
         // ...
     };
 
-    Vector<string> vs = { "Nygaard", "Ritchie" };
+    Vector<string> vs { "Nygaard", "Ritchie" };
 
 ##### Enforcement
 
@@ -17953,7 +18994,7 @@ A relatively informal definition of terms used in the guidelines
 (based of the glossary in [Programming: Principles and Practice using C++](http://www.stroustrup.com/programming.html))
 
 * *abstract class*: a class that cannot be directly used to create objects; often used to define an interface to derived classes.
-  A class is made abstract by having a pure virtual function or a protected constructor.
+  A class is made abstract by having a pure virtual function or only protected constructors.
 * *abstraction*: a description of something that selectively and deliberately ignores (hides) details (e.g., implementation details); selective ignorance.
 * *address*: a value that allows us to find an object in a computer's memory.
 * *algorithm*: a procedure or formula for solving a problem; a finite series of computational steps to produce a result.
@@ -18004,7 +19045,7 @@ A relatively informal definition of terms used in the guidelines
 * *function*: a named unit of code that can be invoked (called) from different parts of a program; a logical unit of computation.
 * *generic programming*: a style of programming focused on the design and efficient implementation of algorithms.
   A generic algorithm will work for all argument types that meet its requirements. In C++, generic programming typically uses templates.
-* *Global variable*: Technically, a named object in namespace scope
+* *global variable*: technically, a named object in namespace scope.
 * *handle*: a class that allows access to another through a member pointer or reference. See also resource, copy, move.
 * *header*: a file containing declarations used to share interfaces between parts of a program.
 * *hiding*: the act of preventing a piece of information from being directly seen or accessed.
@@ -18028,7 +19069,7 @@ A relatively informal definition of terms used in the guidelines
 * *literal*: a notation that directly specifies a value, such as 12 specifying the integer value "twelve."
 * *loop*: a piece of code executed repeatedly; in C++, typically a for-statement or a while-statement.
 * *move*: an operation that transfers a value from one object to another leaving behind a value representing "empty." See also copy.
-* *mutable*: changeable; the opposite of immutable, constant, and variable.
+* *mutable*: changeable; the opposite of immutable, constant, and invariable.
 * *object*: (1) an initialized region of memory of a known type which holds a value of that type; (2) a region of memory.
 * *object code*: output from a compiler intended as input for a linker (for the linker to produce executable code).
 * *object file*: a file containing object code.
@@ -18051,9 +19092,9 @@ A relatively informal definition of terms used in the guidelines
 * *pure virtual function*: a virtual function that must be overridden in a derived class.
 * *RAII*: ("Resource Acquisition Is Initialization") a basic technique for resource management based on scopes.
 * *range*: a sequence of values that can be described by a start point and an end point. For example, \[0:5) means the values 0, 1, 2, 3, and 4.
-* *regular expression*: a notation for patterns in character strings.
 * *recursion*: the act of a function calling itself; see also iteration.
 * *reference*: (1) a value describing the location of a typed value in memory; (2) a variable holding such a value.
+* *regular expression*: a notation for patterns in character strings.
 * *requirement*: (1) a description of the desired behavior of a program or part of a program; (2) a description of the assumptions a function or template makes of its arguments.
 * *resource*: something that is acquired and must later be released, such as a file handle, a lock, or memory. See also handle, owner.
 * *rounding*: conversion of a value to the mathematically nearest value of a less precise type.
