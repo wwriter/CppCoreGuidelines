@@ -3,16 +3,22 @@
     <div class="sidebar-about">
       <h3>
         <!--<a href="{{ site.baseurl }}">-->
-        <a href="https://github.com/CppKorea/CppCoreGuidelines">C++ 핵심 가이드라인</a>
+        <a href="https://github.com/isocpp/CppCoreGuidelines">  
+          C++ 핵심 가이드라인
+        </a>
       </h3>
-      <p class="lead">{{ site.description }}</p>
     </div>
-
     <nav class="sidebar-nav">
       <small>
         {% if page.name == "CppCoreGuidelines.md" %}
+
+        <div class="switch">
+          <input class="tgl tgl-cpp" id="hl_button" type="checkbox"/>
+          <label class="tgl-btn" data-tg-off="하이라이트 끄기" data-tg-on="하이라이트 켜기" for="hl_button"></label>
+        </div>
       <!-- Items have to be added manually until for now -->
       <a class="sidebar-nav-item active" href="#main">위로</a>
+
       <a class="sidebar-nav-item active" href="#S-introduction">In: 소개</a>
       <a class="sidebar-nav-item active" href="#S-philosophy">P: 철학</a>
       <a class="sidebar-nav-item active" href="#S-interfaces">I: 인터페이스</a>
