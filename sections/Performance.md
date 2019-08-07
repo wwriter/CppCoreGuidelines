@@ -12,7 +12,7 @@
 
 성능 규칙 요약:
 
-* [Per.1: Don't optimize without reason](#Rper-reason)
+* [Per.1: 이유없이 최적화하지 마라](#Rper-reason)
 * [Per.2: Don't optimize prematurely](#Rper-Knuth)
 * [Per.3: Don't optimize something that's not performance critical](#Rper-critical)
 * [Per.4: Don't assume that complicated code is necessarily faster than simple code](#Rper-simple)
@@ -35,11 +35,11 @@
 
 ##### Reason
 
-If there is no need for optimization, the main result of the effort will be more errors and higher maintenance costs.
+해야할 필요가 없음에도 최적화를 한다면, 결과적으로 보다 더 많은 에러를 발생시키고 유지보수 비용은 증가될 것이다.
 
 ##### Note
 
-Some people optimize out of habit or because it's fun.
+몇몇 사람들은 습관에 의해서, 혹은 그냥 재미로 최적화를 한다.
 
 ???
 
